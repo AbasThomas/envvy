@@ -133,6 +133,7 @@ model Share {
   repo        Repo      @relation(fields: [repoId], references: [id])
   user        User?     @relation(fields: [userId], references: [id])
 
+  @@unique([repoId, token])
   @@index([repoId])
   @@index([userId])
 }
