@@ -119,11 +119,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="app-page">
+    <div className="app-page space-y-10 pb-10">
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative grid gap-4 md:grid-cols-[1.5fr_1fr]"
+        className="relative grid gap-6 md:grid-cols-[1.5fr_1fr]"
       >
         <Card className="glass relative overflow-hidden border-[#D4A574]/25">
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#D4A574]/10 blur-3xl" />
@@ -213,7 +213,7 @@ export default function DashboardPage() {
         </Card>
       </motion.section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Your Repos", value: repos.length, icon: FolderGit2Icon, color: "text-blue-400" },
           { label: "Total Snapshots", value: totalCommits, icon: ActivityIcon, color: "text-emerald-400" },
@@ -237,8 +237,8 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
-        <div className="space-y-4">
+      <div className="grid gap-10 lg:grid-cols-[1fr_350px]">
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <HistoryIcon className="h-5 w-5 text-[#D4A574]" />

@@ -104,9 +104,9 @@ export default function ReposPage() {
   const canCreate = repoName.trim().length >= 2 && isValidRepoPin(repoPin);
 
   return (
-    <div className="app-page">
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-1">
+    <div className="app-page space-y-10 pb-10">
+      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div className="space-y-2">
           <div className="flex items-center gap-2 text-[#D4A574]">
             <FolderGit2Icon className="h-5 w-5" />
             <span className="text-sm font-bold uppercase tracking-widest">Repositories</span>
@@ -231,7 +231,7 @@ export default function ReposPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {reposQuery.isLoading ? (
           Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="h-48 animate-pulse rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/10" />

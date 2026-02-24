@@ -25,7 +25,7 @@ type RepoItem = {
 
 export function RepoList({ repos }: { repos: RepoItem[] }) {
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-6 md:grid-cols-2">
       {repos.map((repo, index) => (
         <motion.div
           key={repo.id}

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
+import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, RefreshCwIcon, ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
@@ -159,148 +160,215 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
     : `/signup?next=${encodeURIComponent(nextPath)}`;
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-[1.08fr_0.92fr]">
-      <Card className="glass border-[#D4A574]/20">
-        <CardHeader>
-          <CardTitle className="text-3xl">
-            {isSignup ? "Create your envii account" : "Welcome back to envii"}
-          </CardTitle>
-          <CardDescription>
-            {isSignup
-              ? "Sign up, generate your CLI PIN, and start versioning env files securely."
-              : "Log in to manage private repos, backups, team access, and deployment-safe history."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form className="space-y-3" onSubmit={onSubmit}>
-            {isSignup ? <Input placeholder="Full name" {...form.register("name")} /> : null}
-            <Input placeholder="you@example.com" {...form.register("email")} />
-            {!isSignup ? (
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
-                    loginMethod === "password"
-                      ? "border-[#D4A574]/50 bg-[#1B4D3E]/35 text-[#f5f5f0]"
-                      : "border-[#D4A574]/20 bg-[#02120e]/55 text-[#a8b3af] hover:text-[#f5f5f0]"
-                  }`}
-                  onClick={() => setLoginMethod("password")}
-                >
-                  Password
-                </button>
-                <button
-                  type="button"
-                  className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
-                    loginMethod === "pin"
-                      ? "border-[#D4A574]/50 bg-[#1B4D3E]/35 text-[#f5f5f0]"
-                      : "border-[#D4A574]/20 bg-[#02120e]/55 text-[#a8b3af] hover:text-[#f5f5f0]"
-                  }`}
-                  onClick={() => setLoginMethod("pin")}
-                >
-                  6-digit PIN
-                </button>
-              </div>
-            ) : null}
-            {isSignup || loginMethod === "password" ? (
-              <Input type="password" placeholder="Password" {...form.register("password")} />
-            ) : (
-              <Input
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="6-digit PIN"
-                {...form.register("pin")}
-                onChange={(event) => {
-                  const value = event.target.value.replace(/\D/g, "").slice(0, 6);
-                  form.setValue("pin", value, { shouldValidate: true, shouldDirty: true });
-                }}
-              />
-            )}
-            {isSignup ? (
-              <>
-                <Input
-                  type="password"
-                  placeholder="Confirm password"
-                  {...form.register("confirmPassword")}
-                />
-                <Input placeholder="Referral code (optional)" {...form.register("referralCode")} />
-                <label className="inline-flex items-start gap-2 text-xs text-[#a8b3af]">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 h-4 w-4 accent-[#D4A574]"
-                    {...form.register("termsAccepted")}
-                  />
-                  <span>I agree to the terms and privacy policy.</span>
-                </label>
-              </>
-            ) : null}
+    <div className="mx-auto flex min-h-[80vh] w-full max-w-6xl items-center justify-center py-12">
+      <div className="relative grid w-full gap-8 md:grid-cols-[1.1fr_0.9fr]">
+        {/* Background decorative elements */}
+        <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#D4A574]/5 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-[#1B4D3E]/10 blur-3xl" />
 
-            {!isSignup ? (
-              <div className="flex items-center justify-between text-xs">
-                <Link href="#" className="text-[#a8b3af] hover:text-[#D4A574]">
-                  Forgot password?
-                </Link>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setLoginMethod((current) => (current === "password" ? "pin" : "password"))
-                  }
-                  className="inline-flex items-center gap-1 text-[#a8b3af] hover:text-[#D4A574]"
-                >
-                  <KeyRoundIcon className="h-3.5 w-3.5" />
-                  {loginMethod === "password" ? "Use PIN instead" : "Use password instead"}
-                </button>
-              </div>
-            ) : null}
-
-            <Button className="w-full" disabled={loading}>
-              {loading ? "Please wait..." : isSignup ? "Create Account" : "Sign In"}
-              <ArrowRightIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </form>
-
-          <div className="grid gap-2 sm:grid-cols-2">
-            <Button variant="outline" onClick={() => signIn("google", { callbackUrl: nextPath })}>
-              <MailIcon className="mr-2 h-4 w-4" />
-              Google
-            </Button>
-            <Button variant="outline" onClick={() => signIn("github", { callbackUrl: nextPath })}>
-              <GithubIcon className="mr-2 h-4 w-4" />
-              GitHub
-            </Button>
-          </div>
-
-          <div className="pt-1 text-sm text-[#a8b3af]">
-            {isSignup ? "Already have an account?" : "Need an account?"}{" "}
-            <Link href={alternateHref} className="font-semibold text-[#D4A574] hover:text-[#f5f5f0]">
-              {isSignup ? "Log in" : "Sign up"}
+        <div className="flex flex-col justify-center space-y-8 pr-4">
+          <div className="space-y-4">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-lg font-bold text-[#02120e] shadow-lg shadow-[#D4A574]/20">
+                EN
+              </span>
+              <span className="text-2xl font-black tracking-tighter text-[#f5f5f0]">envii</span>
             </Link>
+            <h1 className="text-5xl font-black tracking-tight text-[#f5f5f0] lg:text-6xl">
+              {isSignup ? (
+                <>
+                  Start your <span className="text-[#D4A574]">secure</span> journey.
+                </>
+              ) : (
+                <>
+                  Welcome back to the <span className="text-[#D4A574]">vault</span>.
+                </>
+              )}
+            </h1>
+            <p className="text-lg leading-relaxed text-[#a8b3af]">
+              {isSignup
+                ? "Join thousands of developers versioning their environment variables with AES-256 encryption and zero-knowledge architecture."
+                : "Your encrypted environment backups and team workspace are waiting for your secure access."}
+            </p>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card className="grid-bg border-[#D4A574]/15">
-        <CardHeader>
-          <CardTitle className="text-xl">Core workflow</CardTitle>
-          <CardDescription>CLI-first with secure web management</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-[#c8d2ce]">
-          <p className="inline-flex items-center gap-2">
-            <ShieldCheckIcon className="h-4 w-4 text-[#D4A574]" />
-            Every repo is private by default and protected with a repo PIN.
-          </p>
-          <pre className="overflow-auto rounded-lg bg-[#02120e]/80 p-3 text-xs text-[#a8b3af]">
-{`envii login
-envii login --pin
-envii init my-awesome-app
-envii add .env
-envii commit -m "Rotate JWT secret"
-envii push`}
-          </pre>
-          <p className="text-xs text-[#8d9a95]">
-            After signup you will be redirected to onboarding to generate your 6-digit CLI PIN.
-          </p>
-        </CardContent>
-      </Card>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {[
+              { icon: ShieldCheckIcon, label: "AES-256 Encrypted", color: "text-emerald-400" },
+              { icon: KeyRoundIcon, label: "PIN Protected", color: "text-[#D4A574]" },
+              { icon: GithubIcon, label: "GitHub Integrated", color: "text-blue-400" },
+              { icon: MailIcon, label: "Team Sharing", color: "text-purple-400" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/5 p-4 transition-colors hover:border-[#D4A574]/20">
+                <item.icon className={cn("h-5 w-5", item.color)} />
+                <span className="text-sm font-bold text-[#f5f5f0]">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Card className="glass relative z-10 overflow-hidden border-[#D4A574]/20 bg-[#02120e]/60 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1B4D3E]/5 via-transparent to-transparent" />
+          
+          <CardHeader className="relative space-y-1 pb-8 pt-8 text-center">
+            <CardTitle className="text-2xl font-bold tracking-tight">
+              {isSignup ? "Create Account" : "Secure Login"}
+            </CardTitle>
+            <CardDescription className="text-sm font-medium text-[#a8b3af]">
+              {isSignup ? "Get started with your free developer account" : "Enter your credentials to access your vault"}
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="relative space-y-6 px-8 pb-10">
+            <form className="space-y-4" onSubmit={onSubmit}>
+              <div className="space-y-4">
+                {isSignup && (
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Full Name</label>
+                    <Input 
+                      placeholder="John Doe" 
+                      className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
+                      {...form.register("name")} 
+                    />
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Email Address</label>
+                  <Input 
+                    placeholder="you@example.com" 
+                    className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
+                    {...form.register("email")} 
+                  />
+                </div>
+
+                {!isSignup && (
+                  <div className="flex gap-2 p-1 rounded-xl bg-[#02120e]/80 border border-[#D4A574]/10">
+                    <button
+                      type="button"
+                      className={cn(
+                        "flex-1 rounded-lg py-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                        loginMethod === "password"
+                          ? "bg-[#D4A574] text-[#02120e] shadow-lg"
+                          : "text-[#a8b3af] hover:text-[#f5f5f0]"
+                      )}
+                      onClick={() => setLoginMethod("password")}
+                    >
+                      Password
+                    </button>
+                    <button
+                      type="button"
+                      className={cn(
+                        "flex-1 rounded-lg py-2 text-[10px] font-black uppercase tracking-widest transition-all",
+                        loginMethod === "pin"
+                          ? "bg-[#D4A574] text-[#02120e] shadow-lg"
+                          : "text-[#a8b3af] hover:text-[#f5f5f0]"
+                      )}
+                      onClick={() => setLoginMethod("pin")}
+                    >
+                      6-Digit PIN
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">
+                      {isSignup || loginMethod === "password" ? "Secure Password" : "6-Digit CLI PIN"}
+                    </label>
+                    {!isSignup && loginMethod === "password" && (
+                      <Link href="#" className="text-[10px] font-bold text-[#a8b3af] hover:text-[#D4A574] transition-colors">
+                        Forgot Password?
+                      </Link>
+                    )}
+                  </div>
+                  {isSignup || loginMethod === "password" ? (
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
+                      {...form.register("password")} 
+                    />
+                  ) : (
+                    <Input
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="000000"
+                      className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11 text-center text-xl font-black tracking-[0.5em]"
+                      {...form.register("pin")}
+                      onChange={(event) => {
+                        const value = event.target.value.replace(/\D/g, "").slice(0, 6);
+                        form.setValue("pin", value, { shouldValidate: true, shouldDirty: true });
+                      }}
+                    />
+                  )}
+                </div>
+
+                {isSignup && (
+                  <>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Confirm Password</label>
+                      <Input 
+                        type="password" 
+                        placeholder="••••••••" 
+                        className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
+                        {...form.register("confirmPassword")} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Referral Code (Optional)</label>
+                      <Input 
+                        placeholder="REF-XXXX" 
+                        className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
+                        {...form.register("referralCode")} 
+                      />
+                    </div>
+                    <label className="group flex cursor-pointer items-start gap-3 rounded-xl border border-[#D4A574]/10 bg-[#1B4D3E]/5 p-4 transition-colors hover:bg-[#1B4D3E]/10">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 h-4 w-4 rounded border-[#D4A574]/30 bg-transparent accent-[#D4A574]"
+                        {...form.register("termsAccepted")}
+                      />
+                      <span className="text-xs font-medium leading-relaxed text-[#a8b3af] group-hover:text-[#f5f5f0]">
+                        I agree to the <Link href="#" className="text-[#D4A574] hover:underline">Terms of Service</Link> and <Link href="#" className="text-[#D4A574] hover:underline">Privacy Policy</Link>.
+                      </span>
+                    </label>
+                  </>
+                )}
+              </div>
+
+              <Button 
+                className="group w-full h-12 bg-gradient-to-r from-[#D4A574] to-[#C85A3A] text-[#02120e] font-black uppercase tracking-widest shadow-xl shadow-[#D4A574]/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                disabled={loading}
+              >
+                {loading ? (
+                  <RefreshCwIcon className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    {isSignup ? "Create Secure Account" : "Unlock My Vault"}
+                    <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+            </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-[#D4A574]/10" />
+              </div>
+              <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
+                <span className="bg-[#02120e] px-4 text-[#4d6d62]">New to envii?</span>
+              </div>
+            </div>
+
+            <Link href={alternateHref} className="block text-center">
+              <button className="text-sm font-bold text-[#a8b3af] hover:text-[#D4A574] transition-colors">
+                {isSignup ? "Already have an account? Log In" : "Don't have an account? Sign Up Free"}
+              </button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

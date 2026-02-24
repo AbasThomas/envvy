@@ -25,11 +25,15 @@ export function SiteShell({ children }: SiteShellProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1600px] px-3 pb-8 pt-3 sm:px-4 lg:px-6">
-      <NavShell mode="top" />
-      <div className="flex gap-6">
-        <NavShell mode="sidebar" />
-        <main className="min-w-0 flex-1 pb-4 pt-1 md:pb-6 lg:pt-2">{children}</main>
+    <div className="flex min-h-screen w-full bg-[#02120e]">
+      <NavShell mode="sidebar" />
+      <div className="flex flex-1 flex-col">
+        <div className="px-4 pt-4 sm:px-6 lg:px-8 lg:hidden">
+          <NavShell mode="top" />
+        </div>
+        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-4 sm:px-6 lg:px-8 lg:pt-8">
+          {children}
+        </main>
       </div>
     </div>
   );
