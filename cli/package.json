@@ -1,5 +1,5 @@
 {
-  "name": "envii-cli",
+  "name": "envii",
   "version": "0.1.0",
   "description": "CLI for envii environment variable backup platform",
   "license": "MIT",
@@ -16,6 +16,7 @@
     "build": "tsc -p tsconfig.json",
     "prepare": "npm run build"
   },
+  "preferGlobal": true,
   "dependencies": {
     "axios": "^1.13.2",
     "chalk": "^5.6.2",

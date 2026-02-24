@@ -57,28 +57,28 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
   if (mode === "top") {
     return (
       <header className="sticky top-3 z-40 lg:hidden">
-        <div className="rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/80 p-3 shadow-[0_8px_36px_rgba(0,0,0,0.45)] backdrop-blur">
+        <div className="rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/90 p-3 shadow-[0_12px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl">
           <div className="flex items-center justify-between gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-xs font-bold text-[#02120e]">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-xs font-bold text-[#02120e] shadow-lg">
                 EN
               </span>
               <div>
-                <p className="font-semibold text-[#f5f5f0]">envii</p>
-                <p className="text-xs text-[#a8b3af]">private env control</p>
+                <p className="font-bold text-[#f5f5f0]">envii</p>
+                <p className="text-[10px] font-medium text-[#a8b3af]">Secure Envs</p>
               </div>
             </Link>
 
             <div className="flex items-center gap-2">
-              <button className="rounded-full border border-[#D4A574]/20 p-2 text-[#a8b3af] transition hover:bg-[#1B4D3E]/35 hover:text-[#f5f5f0]">
+              <button className="relative rounded-full border border-[#D4A574]/15 p-2 text-[#a8b3af] transition hover:bg-[#1B4D3E]/30 hover:text-[#f5f5f0]">
                 <BellIcon className="h-4 w-4" />
-                <span className="sr-only">Notifications</span>
+                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#C85A3A]" />
               </button>
               <ThemeToggle />
             </div>
           </div>
 
-          <nav className="no-scrollbar mt-3 flex gap-1 overflow-x-auto pb-1">
+          <nav className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
             {links.map((link) => {
               const active = isActivePath(pathname, link.href);
               const Icon = link.icon;
@@ -87,9 +87,9 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "inline-flex shrink-0 items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition",
+                    "inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all",
                     active
-                      ? "border-[#D4A574]/45 bg-[#1B4D3E]/50 text-[#f5f5f0]"
+                      ? "border-[#D4A574]/40 bg-[#1B4D3E]/50 text-[#f5f5f0] shadow-sm"
                       : "border-transparent bg-[#02120e]/40 text-[#a8b3af] hover:border-[#D4A574]/20 hover:text-[#f5f5f0]",
                   )}
                 >
@@ -105,26 +105,29 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
   }
 
   return (
-    <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] flex-col rounded-3xl border border-[#D4A574]/20 bg-[#02120e]/75 p-4 shadow-[0_16px_48px_rgba(0,0,0,0.5)] backdrop-blur lg:flex">
-      <Link href="/" className="flex items-center gap-3 rounded-xl border border-[#D4A574]/15 bg-[#1B4D3E]/25 px-3 py-3">
-        <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-xs font-bold text-[#02120e]">
+    <aside className="sticky top-4 hidden h-[calc(100vh-2rem)] flex-col rounded-3xl border border-[#D4A574]/15 bg-[#02120e]/80 p-4 shadow-[0_16px_64px_rgba(0,0,0,0.6)] backdrop-blur-xl lg:flex">
+      <Link href="/" className="group flex items-center gap-3 rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/15 px-4 py-4 transition-all hover:border-[#D4A574]/25 hover:bg-[#1B4D3E]/25">
+        <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-sm font-bold text-[#02120e] shadow-[0_0_20px_rgba(212,165,116,0.3)] transition-transform group-hover:scale-105">
           EN
         </span>
         <div>
-          <p className="font-semibold text-[#f5f5f0]">envii</p>
-          <p className="text-xs text-[#a8b3af]">private env control</p>
+          <p className="text-lg font-bold tracking-tight text-[#f5f5f0]">envii</p>
+          <p className="text-[10px] font-medium uppercase tracking-widest text-[#a8b3af]/70">Secure Envs</p>
         </div>
       </Link>
 
-      <div className="mt-4 flex items-center justify-between rounded-xl border border-[#D4A574]/10 bg-[#02120e]/60 px-3 py-2">
-        <Badge variant="muted">Private Mode</Badge>
-        <button className="rounded-full border border-[#D4A574]/20 p-2 text-[#a8b3af] transition hover:bg-[#1B4D3E]/35 hover:text-[#f5f5f0]">
+      <div className="mt-6 flex items-center justify-between rounded-xl border border-[#D4A574]/10 bg-[#02120e]/40 px-3 py-2">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#a8b3af]">Encrypted</span>
+        </div>
+        <button className="relative rounded-full border border-[#D4A574]/10 p-2 text-[#a8b3af] transition hover:bg-[#1B4D3E]/30 hover:text-[#f5f5f0]">
           <BellIcon className="h-4 w-4" />
-          <span className="sr-only">Notifications</span>
+          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#C85A3A]" />
         </button>
       </div>
 
-      <nav className="mt-4 space-y-1">
+      <nav className="mt-6 space-y-1.5">
         {links.map((link) => {
           const active = isActivePath(pathname, link.href);
           const Icon = link.icon;
@@ -133,34 +136,42 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm font-medium transition",
+                "group flex items-center gap-3 rounded-xl border px-4 py-3 text-sm font-semibold transition-all duration-200",
                 active
-                  ? "border-[#D4A574]/45 bg-[#1B4D3E]/45 text-[#f5f5f0]"
-                  : "border-transparent bg-transparent text-[#a8b3af] hover:border-[#D4A574]/15 hover:bg-[#1B4D3E]/20 hover:text-[#f5f5f0]",
+                  ? "border-[#D4A574]/30 bg-[#1B4D3E]/40 text-[#f5f5f0] shadow-sm"
+                  : "border-transparent bg-transparent text-[#a8b3af] hover:bg-[#1B4D3E]/15 hover:text-[#f5f5f0]",
               )}
             >
-              <Icon className={cn("h-4 w-4", active ? "text-[#D4A574]" : "text-[#8d9a95]")} />
+              <Icon className={cn("h-5 w-5 transition-colors", active ? "text-[#D4A574]" : "text-[#8d9a95] group-hover:text-[#f5f5f0]")} />
               {link.label}
+              {active && (
+                <motion.div
+                  layoutId="activeNav"
+                  className="ml-auto h-1.5 w-1.5 rounded-full bg-[#D4A574]"
+                />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto space-y-2">
-        <div className="rounded-xl border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-3 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#D4A574]">
-            Secure Flow
+      <div className="mt-auto space-y-3">
+        <div className="relative overflow-hidden rounded-2xl border border-[#D4A574]/15 bg-gradient-to-br from-[#1B4D3E]/20 to-transparent px-4 py-4">
+          <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[#D4A574]/5 blur-xl" />
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4A574]/80">
+            Security Status
           </p>
-          <p className="mt-1 text-xs text-[#a8b3af]">
-            Select repo, enter 6-digit PIN, then manage env versions safely.
+          <p className="mt-2 text-xs leading-relaxed text-[#a8b3af]">
+            Your environment variables are AES-256 encrypted and PIN protected.
           </p>
-          <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-[#02120e]/70 px-2 py-1 text-[11px] text-[#8d9a95]">
-            <ShieldCheckIcon className="h-3.5 w-3.5 text-[#D4A574]" />
-            PIN protected repos
+          <div className="mt-3 flex items-center gap-2 rounded-lg bg-[#02120e]/60 px-2 py-1.5 text-[10px] font-medium text-[#8d9a95] border border-[#D4A574]/5">
+            <ShieldCheckIcon className="h-3.5 w-3.5 text-emerald-500" />
+            Active Protection
           </div>
         </div>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between px-2">
           <ThemeToggle />
+          <p className="text-[10px] font-medium text-[#a8b3af]/50">v1.2.0</p>
         </div>
       </div>
     </aside>

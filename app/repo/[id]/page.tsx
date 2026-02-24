@@ -430,7 +430,7 @@ export default function RepoPage() {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="app-page">
       <Card>
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-3">

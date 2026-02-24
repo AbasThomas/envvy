@@ -2,7 +2,18 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { CompassIcon, PlusIcon, RefreshCcwIcon } from "lucide-react";
+import {
+  ActivityIcon,
+  CompassIcon,
+  FolderGit2Icon,
+  HistoryIcon,
+  LayoutDashboardIcon,
+  PlusIcon,
+  RefreshCcwIcon,
+  StarIcon,
+  UsersIcon,
+  ZapIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -111,158 +122,222 @@ export default function DashboardPage() {
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid gap-3 md:grid-cols-[1fr_auto]"
+        className="relative grid gap-4 md:grid-cols-[1.5fr_1fr]"
       >
-        <Card className="glass border-[#D4A574]/25">
-          <CardHeader>
-            <CardTitle>{`Hey ${displayName}`}</CardTitle>
-            <CardDescription>
-              Manage private repos, encrypted backups, and approval-safe environment updates.
+        <Card className="glass relative overflow-hidden border-[#D4A574]/25">
+          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#D4A574]/10 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#1B4D3E]/20 blur-3xl" />
+          
+          <CardHeader className="relative z-10">
+            <div className="flex items-center gap-2 text-sm font-medium text-[#D4A574]">
+              <LayoutDashboardIcon className="h-4 w-4" />
+              <span>Workspace Overview</span>
+            </div>
+            <CardTitle className="mt-2 text-3xl font-bold tracking-tight">
+              {`Welcome back, ${displayName}!`}
+            </CardTitle>
+            <CardDescription className="max-w-md text-base text-[#a8b3af]">
+              Manage your private repositories, encrypted backups, and approval-safe environment updates from one secure hub.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-wrap items-center gap-2">
-            <Badge>Private by default</Badge>
-            <Badge variant="muted">CLI synced</Badge>
-            <Badge variant="success">PIN guard active</Badge>
-            <Link href="/explore">
-              <Button size="sm" variant="ghost">
-                <CompassIcon className="mr-1 h-4 w-4" />
-                Explore Public Repos
+          <CardContent className="relative z-10 flex flex-wrap items-center gap-3">
+            <Badge className="bg-[#1B4D3E]/30 text-[#f5f5f0] border-[#D4A574]/15">
+              Private by default
+            </Badge>
+            <Badge variant="muted" className="bg-[#02120e]/40">
+              CLI synced
+            </Badge>
+            <Badge variant="success" className="bg-[#1B4D3E]/40 border-[#1B4D3E]/50">
+              PIN guard active
+            </Badge>
+            <Link href="/explore" className="ml-auto">
+              <Button size="sm" variant="ghost" className="text-[#D4A574] hover:bg-[#D4A574]/10">
+                <CompassIcon className="mr-2 h-4 w-4" />
+                Explore Community
               </Button>
             </Link>
           </CardContent>
         </Card>
-        <Card className="border-[#D4A574]/25 bg-[#1B4D3E]/18">
+
+        <Card className="relative overflow-hidden border-[#D4A574]/20 bg-[#1B4D3E]/12">
           <CardHeader>
-            <CardTitle className="text-base">Create New Repo</CardTitle>
+            <div className="flex items-center gap-2 text-sm font-medium text-[#D4A574]">
+              <PlusIcon className="h-4 w-4" />
+              <span>Quick Create</span>
+            </div>
+            <CardTitle className="text-xl">New Repository</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Input
-              placeholder="repo-name"
-              value={repoName}
-              onChange={(event) => setRepoName(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  submitCreateRepo();
-                }
-              }}
-            />
-            <Input
-              placeholder="Description (optional)"
-              value={repoDescription}
-              onChange={(event) => setRepoDescription(event.target.value)}
-            />
-            <select
-              className="themed-select w-full rounded-xl px-3 py-2 text-sm"
-              value={repoVisibility}
-              onChange={(event) =>
-                setRepoVisibility(event.target.value as "private" | "public")
-              }
-            >
-              <option value="private">Private</option>
-              <option value="public">Public</option>
-            </select>
-            <Input
-              placeholder="6-digit repo PIN"
-              value={repoPin}
-              inputMode="numeric"
-              maxLength={6}
-              onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  submitCreateRepo();
-                }
-              }}
-            />
+          <CardContent className="space-y-3">
+            <div className="grid gap-2">
+              <Input
+                placeholder="repo-name"
+                className="bg-[#02120e]/60 border-[#D4A574]/15 focus:ring-[#D4A574]/30"
+                value={repoName}
+                onChange={(event) => setRepoName(event.target.value)}
+              />
+              <div className="flex gap-2">
+                <select
+                  className="themed-select flex-1 rounded-xl px-3 py-2 text-sm border-[#D4A574]/15 bg-[#02120e]/60"
+                  value={repoVisibility}
+                  onChange={(event) =>
+                    setRepoVisibility(event.target.value as "private" | "public")
+                  }
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+                <Input
+                  placeholder="6-digit PIN"
+                  className="w-28 bg-[#02120e]/60 border-[#D4A574]/15"
+                  value={repoPin}
+                  inputMode="numeric"
+                  maxLength={6}
+                  onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                />
+              </div>
+            </div>
             <Button
+              className="w-full bg-gradient-to-r from-[#D4A574] to-[#C85A3A] text-[#02120e] font-bold hover:opacity-90 transition-opacity"
               onClick={submitCreateRepo}
               disabled={createRepoMutation.isPending || !repoName.trim() || !isValidRepoPin(repoPin)}
             >
-              <PlusIcon className="mr-1 h-4 w-4" />
-              Create Repo
+              {createRepoMutation.isPending ? (
+                <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <PlusIcon className="mr-2 h-4 w-4" />
+              )}
+              Create Repository
             </Button>
           </CardContent>
         </Card>
       </motion.section>
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardDescription>Your Repos</CardDescription>
-            <CardTitle>{repos.length}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardDescription>Total Commits</CardDescription>
-            <CardTitle>{totalCommits}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardDescription>Stars Received</CardDescription>
-            <CardTitle>{totalStars}</CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardDescription>Team Members</CardDescription>
-            <CardTitle>{totalTeamMembers}</CardTitle>
-          </CardHeader>
-        </Card>
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          { label: "Your Repos", value: repos.length, icon: FolderGit2Icon, color: "text-blue-400" },
+          { label: "Total Snapshots", value: totalCommits, icon: ActivityIcon, color: "text-emerald-400" },
+          { label: "Stars Received", value: totalStars, icon: StarIcon, color: "text-amber-400" },
+          { label: "Team Members", value: totalTeamMembers, icon: UsersIcon, color: "text-purple-400" },
+        ].map((stat, i) => (
+          <Card key={i} className="group relative overflow-hidden border-[#D4A574]/15 bg-[#02120e]/40 transition hover:border-[#D4A574]/30">
+            <div className={`absolute -right-4 -top-4 opacity-5 transition-transform group-hover:scale-110 group-hover:opacity-10`}>
+              <stat.icon className="h-24 w-24" />
+            </div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardDescription className="text-xs font-medium uppercase tracking-wider">
+                {stat.label}
+              </CardDescription>
+              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            </CardHeader>
+            <CardContent>
+              <CardTitle className="text-2xl font-bold">{stat.value}</CardTitle>
+            </CardContent>
+          </Card>
+        ))}
       </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest repository updates from your workspace.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {repos.slice(0, 6).map((repo) => (
-            <div
-              key={repo.id}
-              className="rounded-lg border border-[#D4A574]/12 bg-[#1B4D3E]/18 px-3 py-2 text-sm"
-            >
-              <p className="text-[#f5f5f0]">{repo.name}</p>
-              <p className="text-xs text-[#a8b3af]">
-                Updated {new Date(repo.updatedAt).toLocaleString()} - {repo._count.envs} snapshots
-              </p>
+      <div className="grid gap-6 lg:grid-cols-[1fr_350px]">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <HistoryIcon className="h-5 w-5 text-[#D4A574]" />
+              <h2 className="text-xl font-semibold text-[#f5f5f0]">Your Repositories</h2>
             </div>
-          ))}
-          {!repos.length ? (
-            <p className="text-sm text-[#a8b3af]">
-              No activity yet. Create your first repo to get started.
-            </p>
-          ) : null}
-        </CardContent>
-      </Card>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-[#a8b3af] hover:text-[#f5f5f0]"
+              onClick={() => reposQuery.refetch()}
+              disabled={reposQuery.isFetching}
+            >
+              <RefreshCcwIcon className={cn("mr-2 h-3 w-3", reposQuery.isFetching && "animate-spin")} />
+              Refresh
+            </Button>
+          </div>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-[#f5f5f0]">Your Repositories</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => reposQuery.refetch()}
-          disabled={reposQuery.isFetching}
-        >
-          <RefreshCcwIcon className="mr-2 h-4 w-4" />
-          Refresh
-        </Button>
+          {reposQuery.isLoading ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-32 rounded-xl bg-[#1B4D3E]/10 animate-pulse border border-[#D4A574]/5" />
+              ))}
+            </div>
+          ) : repos.length ? (
+            <RepoList repos={repos} />
+          ) : (
+            <Card className="border-dashed border-[#D4A574]/20 bg-transparent">
+              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="mb-4 rounded-full bg-[#1B4D3E]/20 p-4 text-[#D4A574]">
+                  <FolderGit2Icon className="h-8 w-8" />
+                </div>
+                <p className="text-[#f5f5f0] font-medium">No repositories yet</p>
+                <p className="mt-1 text-sm text-[#a8b3af] max-w-[280px]">
+                  Create one above, then run <code className="bg-[#1B4D3E]/30 px-1 rounded">envii backup</code> from your project terminal.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        <aside className="space-y-6">
+          <Card className="border-[#D4A574]/15 bg-[#02120e]/60">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <ZapIcon className="h-4 w-4 text-amber-500" />
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider">Quick Actions</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-2">
+              <Link href="/explore">
+                <Button variant="outline" className="w-full justify-start border-[#D4A574]/15 bg-transparent hover:bg-[#1B4D3E]/20">
+                  <CompassIcon className="mr-3 h-4 w-4 text-[#D4A574]" />
+                  Explore Public
+                </Button>
+              </Link>
+              <Link href="/editor">
+                <Button variant="outline" className="w-full justify-start border-[#D4A574]/15 bg-transparent hover:bg-[#1B4D3E]/20">
+                  <ZapIcon className="mr-3 h-4 w-4 text-amber-500" />
+                  Live Editor
+                </Button>
+              </Link>
+              <Link href="/profile">
+                <Button variant="outline" className="w-full justify-start border-[#D4A574]/15 bg-transparent hover:bg-[#1B4D3E]/20">
+                  <UsersIcon className="mr-3 h-4 w-4 text-blue-400" />
+                  Manage Team
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="border-[#D4A574]/15 bg-[#02120e]/60">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <ActivityIcon className="h-4 w-4 text-emerald-500" />
+                <CardTitle className="text-sm font-semibold uppercase tracking-wider">Recent Activity</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {repos.slice(0, 5).map((repo) => (
+                <div key={repo.id} className="group flex items-start gap-3">
+                  <div className="mt-1 flex h-2 w-2 rounded-full bg-[#D4A574]/40 group-hover:bg-[#D4A574]" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none text-[#f5f5f0] group-hover:text-[#D4A574] transition-colors">
+                      {repo.name}
+                    </p>
+                    <p className="text-xs text-[#a8b3af]">
+                      {new Date(repo.updatedAt).toLocaleDateString()} · {repo._count.envs} snaps
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {!repos.length ? (
+                <p className="text-xs text-[#a8b3af] italic">
+                  No activity recorded.
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
+        </aside>
       </div>
-
-      {reposQuery.isLoading ? (
-        <Card>
-          <CardContent className="py-8 text-sm text-[#a8b3af]">Loading repositories...</CardContent>
-        </Card>
-      ) : repos.length ? (
-        <RepoList repos={repos} />
-      ) : (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-[#a8b3af]">
-            No repositories yet. Create one, then run `envii backup` from your project.
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

@@ -61,7 +61,7 @@ export default function OnboardingPage() {
   const canUseCustomPin = useMemo(() => /^\d{6}$/.test(customPin), [customPin]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-4">
+    <div className="app-page mx-auto w-full max-w-4xl">
       <Card className="glass border-[#D4A574]/25">
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
