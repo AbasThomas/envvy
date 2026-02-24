@@ -1,14 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ArrowRightIcon,
-  GithubIcon,
-  KeyRoundIcon,
-  MailIcon,
-  ShieldCheckIcon,
-  UserPlusIcon,
-} from "lucide-react";
+import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -24,7 +17,8 @@ import { Input } from "@/components/ui/input";
 const formSchema = z.object({
   name: z.string().trim().max(64).optional().or(z.literal("")),
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().optional().or(z.literal("")),
+  pin: z.string().optional().or(z.literal("")),
   confirmPassword: z.string().optional().or(z.literal("")),
   referralCode: z.string().trim().max(64).optional().or(z.literal("")),
   termsAccepted: z.boolean().default(false),
@@ -48,6 +42,7 @@ type CliPinStateResponse = {
 export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClientProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<"password" | "pin">("password");
 
   const isSignup = mode === "signup";
 
@@ -57,6 +52,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
       name: "",
       email: "",
       password: "",
+      pin: "",
       confirmPassword: "",
       referralCode: defaultReferralCode ?? "",
       termsAccepted: false,
@@ -67,11 +63,12 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
     setLoading(true);
     try {
       if (isSignup) {
-        if (!values.name || values.name.trim().length < 2) {
-          throw new Error("Full name must be at least 2 characters");
-        }
+        const trimmedName = values.name?.trim();
         if (values.password !== values.confirmPassword) {
           throw new Error("Password confirmation does not match");
+        }
+        if (!values.password || values.password.length < 8) {
+          throw new Error("Password must be at least 8 characters");
         }
         if (!values.termsAccepted) {
           throw new Error("You must agree to terms and privacy");
@@ -81,7 +78,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: values.name.trim(),
+            name: trimmedName || undefined,
             email: values.email,
             password: values.password,
             referralCode: values.referralCode?.trim() || undefined,
@@ -94,9 +91,21 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
         }
       }
 
+      if (!isSignup && loginMethod === "password") {
+        if (!values.password || values.password.length < 8) {
+          throw new Error("Enter your account password");
+        }
+      }
+      if (!isSignup && loginMethod === "pin") {
+        if (!/^\d{6}$/.test(values.pin ?? "")) {
+          throw new Error("Enter your 6-digit PIN");
+        }
+      }
+
       const result = await signIn("credentials", {
         email: values.email,
-        password: values.password,
+        password: isSignup || loginMethod === "password" ? values.password : undefined,
+        pin: !isSignup && loginMethod === "pin" ? values.pin : undefined,
         redirect: false,
       });
 
@@ -155,7 +164,46 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
           <form className="space-y-3" onSubmit={onSubmit}>
             {isSignup ? <Input placeholder="Full name" {...form.register("name")} /> : null}
             <Input placeholder="you@example.com" {...form.register("email")} />
-            <Input type="password" placeholder="Password" {...form.register("password")} />
+            {!isSignup ? (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    loginMethod === "password"
+                      ? "border-[#D4A574]/50 bg-[#1B4D3E]/35 text-[#f5f5f0]"
+                      : "border-[#D4A574]/20 bg-[#02120e]/55 text-[#a8b3af] hover:text-[#f5f5f0]"
+                  }`}
+                  onClick={() => setLoginMethod("password")}
+                >
+                  Password
+                </button>
+                <button
+                  type="button"
+                  className={`rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    loginMethod === "pin"
+                      ? "border-[#D4A574]/50 bg-[#1B4D3E]/35 text-[#f5f5f0]"
+                      : "border-[#D4A574]/20 bg-[#02120e]/55 text-[#a8b3af] hover:text-[#f5f5f0]"
+                  }`}
+                  onClick={() => setLoginMethod("pin")}
+                >
+                  6-digit PIN
+                </button>
+              </div>
+            ) : null}
+            {isSignup || loginMethod === "password" ? (
+              <Input type="password" placeholder="Password" {...form.register("password")} />
+            ) : (
+              <Input
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="6-digit PIN"
+                {...form.register("pin")}
+                onChange={(event) => {
+                  const value = event.target.value.replace(/\D/g, "").slice(0, 6);
+                  form.setValue("pin", value, { shouldValidate: true, shouldDirty: true });
+                }}
+              />
+            )}
             {isSignup ? (
               <>
                 <Input
@@ -180,10 +228,16 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
                 <Link href="#" className="text-[#a8b3af] hover:text-[#D4A574]">
                   Forgot password?
                 </Link>
-                <Link href="/onboarding" className="inline-flex items-center gap-1 text-[#a8b3af] hover:text-[#D4A574]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLoginMethod((current) => (current === "password" ? "pin" : "password"))
+                  }
+                  className="inline-flex items-center gap-1 text-[#a8b3af] hover:text-[#D4A574]"
+                >
                   <KeyRoundIcon className="h-3.5 w-3.5" />
-                  Use PIN instead
-                </Link>
+                  {loginMethod === "password" ? "Use PIN instead" : "Use password instead"}
+                </button>
               </div>
             ) : null}
 

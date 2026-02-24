@@ -23,10 +23,15 @@ declare module "next-auth" {
   }
 }
 
-const credentialSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+const credentialSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(8).optional(),
+    pin: z.string().regex(/^\d{6}$/).optional(),
+  })
+  .refine((value) => Boolean(value.password || value.pin), {
+    message: "Password or PIN is required",
+  });
 
 const providers: Array<ReturnType<typeof Credentials> | ReturnType<typeof Google> | ReturnType<typeof GitHub>> = [
   Credentials({
@@ -34,6 +39,7 @@ const providers: Array<ReturnType<typeof Credentials> | ReturnType<typeof Google
     credentials: {
       email: { label: "Email", type: "email" },
       password: { label: "Password", type: "password" },
+      pin: { label: "PIN", type: "text" },
     },
     async authorize(rawCredentials) {
       const parsed = credentialSchema.safeParse(rawCredentials);
@@ -42,10 +48,24 @@ const providers: Array<ReturnType<typeof Credentials> | ReturnType<typeof Google
       const user = await prisma.user.findUnique({
         where: { email: parsed.data.email.toLowerCase() },
       });
-      if (!user || !user.passwordHash) return null;
+      if (!user) return null;
 
-      const passwordValid = await compare(parsed.data.password, user.passwordHash);
-      if (!passwordValid) return null;
+      if (parsed.data.pin) {
+        const pinRows = await prisma.$queryRaw<Array<{ cli_pin_hash: string | null }>>`
+          SELECT "cli_pin_hash"
+          FROM "User"
+          WHERE "id" = ${user.id}
+          LIMIT 1
+        `;
+        const pinHash = pinRows[0]?.cli_pin_hash ?? null;
+        if (!pinHash) return null;
+        const pinValid = await compare(parsed.data.pin, pinHash);
+        if (!pinValid) return null;
+      } else {
+        if (!user.passwordHash || !parsed.data.password) return null;
+        const passwordValid = await compare(parsed.data.password, user.passwordHash);
+        if (!passwordValid) return null;
+      }
 
       if (!user.apiToken) {
         const refreshed = await prisma.user.update({

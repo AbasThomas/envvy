@@ -37,6 +37,8 @@ type ProfileResponse = {
 export default function DashboardPage() {
   const queryClient = useQueryClient();
   const [repoName, setRepoName] = useState("");
+  const [repoDescription, setRepoDescription] = useState("");
+  const [repoVisibility, setRepoVisibility] = useState<"private" | "public">("private");
   const [repoPin, setRepoPin] = useState("");
 
   const profileQuery = useQuery({
@@ -50,11 +52,18 @@ export default function DashboardPage() {
   });
 
   const createRepoMutation = useMutation({
-    mutationFn: async (payload: { name: string; repoPin: string }) => {
+    mutationFn: async (payload: {
+      name: string;
+      description?: string;
+      visibility: "private" | "public";
+      repoPin: string;
+    }) => {
       return fetcher("/api/repos", {
         method: "POST",
         body: JSON.stringify({
           name: payload.name,
+          description: payload.description,
+          visibility: payload.visibility,
           repoPin: payload.repoPin,
           tags: [],
         }),
@@ -63,6 +72,8 @@ export default function DashboardPage() {
     onSuccess: () => {
       toast.success("Repository created");
       setRepoName("");
+      setRepoDescription("");
+      setRepoVisibility("private");
       setRepoPin("");
       queryClient.invalidateQueries({ queryKey: ["repos"] });
     },
@@ -89,6 +100,8 @@ export default function DashboardPage() {
     }
     createRepoMutation.mutate({
       name: trimmedName,
+      description: repoDescription.trim() || undefined,
+      visibility: repoVisibility,
       repoPin,
     });
   }
@@ -108,7 +121,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-2">
-            <Badge>Private repo only</Badge>
+            <Badge>Private by default</Badge>
             <Badge variant="muted">CLI synced</Badge>
             <Badge variant="success">PIN guard active</Badge>
             <Link href="/explore">
@@ -121,7 +134,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="border-[#D4A574]/25 bg-[#1B4D3E]/18">
           <CardHeader>
-            <CardTitle className="text-base">Create Private Repo</CardTitle>
+            <CardTitle className="text-base">Create New Repo</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <Input
@@ -134,6 +147,21 @@ export default function DashboardPage() {
                 }
               }}
             />
+            <Input
+              placeholder="Description (optional)"
+              value={repoDescription}
+              onChange={(event) => setRepoDescription(event.target.value)}
+            />
+            <select
+              className="themed-select w-full rounded-xl px-3 py-2 text-sm"
+              value={repoVisibility}
+              onChange={(event) =>
+                setRepoVisibility(event.target.value as "private" | "public")
+              }
+            >
+              <option value="private">Private</option>
+              <option value="public">Public</option>
+            </select>
             <Input
               placeholder="6-digit repo PIN"
               value={repoPin}
@@ -151,7 +179,7 @@ export default function DashboardPage() {
               disabled={createRepoMutation.isPending || !repoName.trim() || !isValidRepoPin(repoPin)}
             >
               <PlusIcon className="mr-1 h-4 w-4" />
-              Create Private Repo
+              Create Repo
             </Button>
           </CardContent>
         </Card>

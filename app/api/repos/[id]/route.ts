@@ -22,16 +22,41 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
+async function resolveRepoIdForUser(userId: string, identifier: string) {
+  const repo = await prisma.repo.findFirst({
+    where: {
+      AND: [
+        {
+          OR: [{ id: identifier }, { slug: identifier }],
+        },
+        {
+          OR: [
+            { userId },
+            { shares: { some: { userId } } },
+            { isPublic: true },
+          ],
+        },
+      ],
+    },
+    select: { id: true },
+  });
+
+  return repo?.id ?? null;
+}
+
 export async function GET(request: NextRequest, { params }: Params) {
-  const { id } = await params;
+  const { id: identifier } = await params;
   const viewer = await getRequestUser(request);
   if (!viewer) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepoWithPin(request, viewer.id, id, "VIEWER");
+  const repoId = await resolveRepoIdForUser(viewer.id, identifier);
+  if (!repoId) return fail("Repository not found", 404);
+
+  const access = await canAccessRepoWithPin(request, viewer.id, repoId, "VIEWER");
   if (!access.ok) return fail(access.error, access.status);
 
   const repo = await prisma.repo.findUnique({
-    where: { id },
+    where: { id: repoId },
     include: {
       owner: {
         select: {
@@ -58,13 +83,30 @@ export async function GET(request: NextRequest, { params }: Params) {
           user: { select: { id: true, name: true, email: true } },
         },
       },
+      shares: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: {
+            select: { id: true, name: true, email: true, image: true },
+          },
+        },
+      },
+      auditLogs: {
+        orderBy: { timestamp: "desc" },
+        take: 50,
+        include: {
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+        },
+      },
     },
   });
 
   if (!repo) return fail("Repository not found", 404);
 
   await prisma.repo.update({
-    where: { id: repo.id },
+    where: { id: repoId },
     data: { viewsCount: { increment: 1 } },
   });
 
@@ -72,11 +114,14 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PATCH(request: NextRequest, { params }: Params) {
-  const { id } = await params;
+  const { id: identifier } = await params;
   const user = await getRequestUser(request);
   if (!user) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepoWithPin(request, user.id, id, "EDITOR");
+  const repoId = await resolveRepoIdForUser(user.id, identifier);
+  if (!repoId) return fail("Repository not found", 404);
+
+  const access = await canAccessRepoWithPin(request, user.id, repoId, "EDITOR");
   if (!access.ok || !access.repo) return fail(access.error, access.status);
 
   const payload = await request.json().catch(() => null);
@@ -87,7 +132,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const updated = await prisma.repo.update({
-    where: { id },
+    where: { id: repoId },
     data: {
       name: parsed.data.name,
       description: parsed.data.description,
@@ -104,13 +149,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     await prisma.$executeRaw`
       UPDATE "Repo"
       SET "repo_pin_hash" = ${await hash(parsed.data.repoPin, 10)}
-      WHERE "id" = ${id}
+      WHERE "id" = ${repoId}
     `;
   }
 
   await prisma.auditLog.create({
     data: {
-      repoId: id,
+      repoId,
       userId: user.id,
       action: "repo.updated",
       metadata: {
@@ -124,18 +169,21 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const { id } = await params;
+  const { id: identifier } = await params;
   const user = await getRequestUser(request);
   if (!user) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepoWithPin(request, user.id, id, "OWNER");
+  const repoId = await resolveRepoIdForUser(user.id, identifier);
+  if (!repoId) return fail("Repository not found", 404);
+
+  const access = await canAccessRepoWithPin(request, user.id, repoId, "OWNER");
   if (!access.ok) return fail(access.error, access.status);
 
-  const repo = await prisma.repo.findUnique({ where: { id } });
+  const repo = await prisma.repo.findUnique({ where: { id: repoId } });
   if (!repo) return fail("Repository not found", 404);
   if (repo.userId !== user.id) return fail("Only repository owners can delete", 403);
 
-  await prisma.repo.delete({ where: { id } });
+  await prisma.repo.delete({ where: { id: repoId } });
 
   return ok({ success: true });
 }

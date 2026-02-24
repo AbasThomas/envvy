@@ -32,6 +32,7 @@ export default function ReposPage() {
   const queryClient = useQueryClient();
   const [repoName, setRepoName] = useState("");
   const [repoDescription, setRepoDescription] = useState("");
+  const [repoVisibility, setRepoVisibility] = useState<"private" | "public">("private");
   const [repoPin, setRepoPin] = useState("");
   const [filter, setFilter] = useState<RepoFilter>("all");
 
@@ -47,6 +48,7 @@ export default function ReposPage() {
         body: JSON.stringify({
           name: repoName.trim(),
           description: repoDescription.trim() || undefined,
+          visibility: repoVisibility,
           repoPin,
           tags: [],
         }),
@@ -55,6 +57,7 @@ export default function ReposPage() {
       toast.success("Repository created");
       setRepoName("");
       setRepoDescription("");
+      setRepoVisibility("private");
       setRepoPin("");
       queryClient.invalidateQueries({ queryKey: ["repos-table"] });
     },
@@ -93,11 +96,9 @@ export default function ReposPage() {
       <Card className="glass border-[#D4A574]/25">
         <CardHeader>
           <CardTitle>Your Repositories</CardTitle>
-          <CardDescription>
-            Create and manage private repos used by CLI and dashboard workflows.
-          </CardDescription>
+          <CardDescription>Create and manage repositories used by CLI and dashboard workflows.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-2 md:grid-cols-[1fr_1fr_180px_auto]">
+        <CardContent className="grid gap-2 md:grid-cols-[1fr_1fr_140px_180px_auto]">
           <Input
             placeholder="Repository name"
             value={repoName}
@@ -108,6 +109,16 @@ export default function ReposPage() {
             value={repoDescription}
             onChange={(event) => setRepoDescription(event.target.value)}
           />
+          <select
+            className="themed-select rounded-xl px-3 py-2 text-sm"
+            value={repoVisibility}
+            onChange={(event) =>
+              setRepoVisibility(event.target.value as "private" | "public")
+            }
+          >
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+          </select>
           <Input
             placeholder="6-digit PIN"
             value={repoPin}

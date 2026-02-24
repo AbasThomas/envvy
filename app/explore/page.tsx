@@ -63,7 +63,7 @@ export default function ExplorePage() {
           <div className="relative">
             <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8d9a95]" />
             <Input
-              placeholder="Search your private tags locally..."
+              placeholder="Search public repositories, tags, and templates..."
               className="pl-10"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
