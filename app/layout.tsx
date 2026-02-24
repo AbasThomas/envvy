@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Sora, Space_Grotesk } from "next/font/google";
 
 import { CommandPalette } from "@/components/command-palette";
-import { NavShell } from "@/components/nav-shell";
 import { Providers } from "@/components/providers";
 import { PWARegister } from "@/components/pwa-register";
+import { SiteShell } from "@/components/site-shell";
 import "./globals.css";
 
 const heading = Sora({
@@ -41,8 +41,7 @@ export default function RootLayout({
         <Providers>
           <PWARegister />
           <div className="min-h-screen bg-app-background text-foreground">
-            <NavShell />
-            <main className="mx-auto w-full max-w-6xl px-4 py-6 md:py-8">{children}</main>
+            <SiteShell>{children}</SiteShell>
           </div>
           <CommandPalette />
         </Providers>
