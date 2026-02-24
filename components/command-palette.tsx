@@ -40,7 +40,7 @@ export function CommandPalette() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 grid place-items-start bg-black/70 p-4 pt-20 backdrop-blur-sm"
+          className="fixed inset-0 z-50 grid place-items-start bg-[#010705]/70 p-4 pt-20 backdrop-blur-sm"
           onClick={() => setOpen(false)}
         >
           <motion.div
@@ -48,11 +48,11 @@ export function CommandPalette() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -20, opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="mx-auto w-full max-w-xl rounded-2xl border border-zinc-800 bg-zinc-950 p-3"
+            className="mx-auto w-full max-w-xl rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/90 p-3"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="mb-3 flex items-center gap-2 rounded-xl border border-zinc-800 px-3">
-              <SearchIcon className="h-4 w-4 text-zinc-500" />
+            <div className="mb-3 flex items-center gap-2 rounded-xl border border-[#D4A574]/20 bg-[#1B4D3E]/20 px-3">
+              <SearchIcon className="h-4 w-4 text-[#a8b3af]" />
               <Input
                 placeholder="Jump to..."
                 className="border-0 bg-transparent px-0 focus-visible:ring-0"
@@ -65,14 +65,14 @@ export function CommandPalette() {
               {items.map((item) => (
                 <button
                   key={item.path}
-                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800"
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-[#c8d2ce] hover:bg-[#1B4D3E]/35"
                   onClick={() => {
                     setOpen(false);
                     router.push(item.path);
                   }}
                 >
                   {item.label}
-                  <span className="text-xs text-zinc-500">{item.path}</span>
+                  <span className="text-xs text-[#6e7d78]">{item.path}</span>
                 </button>
               ))}
             </div>

@@ -7,5 +7,5 @@ type Props = {
 export default async function LoginPage({ searchParams }: Props) {
   const params = await searchParams;
   const nextPath = params.next ?? "/dashboard";
-  return <LoginClient nextPath={nextPath} />;
+  return <LoginClient nextPath={nextPath} mode="login" />;
 }

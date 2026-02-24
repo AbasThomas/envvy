@@ -41,14 +41,14 @@ export function PlanCards() {
               <div className="flex items-center justify-between">
                 <CardTitle>{plan.label}</CardTitle>
                 <Badge variant={paid ? "success" : "muted"}>
-                  {paid ? `₦${plan.monthlyNgn}` : "Free"}
+                  {paid ? `NGN ${plan.monthlyNgn}` : "Free"}
                 </Badge>
               </div>
               <CardDescription>
                 {plan.monthlyUsd > 0 ? `$${plan.monthlyUsd}/mo` : "Starter tier"}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm text-zinc-200">
+            <CardContent className="space-y-3 text-sm text-[#c8d2ce]">
               <p>Repos: {plan.repoLimit === Number.MAX_SAFE_INTEGER ? "Unlimited" : plan.repoLimit}</p>
               <p>Public repos: {plan.allowPublicRepos ? "Yes" : "No"}</p>
               <p>Sharing: {plan.allowSharing ? "Yes" : "No"}</p>

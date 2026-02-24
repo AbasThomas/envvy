@@ -26,9 +26,9 @@ export function EnvGraph({ keys }: Props) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.06 }}
-          className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3"
+          className="rounded-xl border border-[#D4A574]/15 bg-[#1B4D3E]/25 p-3"
         >
-          <p className="mb-2 text-xs uppercase tracking-wide text-zinc-500">
+          <p className="mb-2 text-xs uppercase tracking-wide text-[#8d9a95]">
             {group === "GEN" ? "General" : group.replace("_", "")}
           </p>
           <div className="flex flex-wrap gap-2">

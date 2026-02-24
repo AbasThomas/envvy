@@ -82,20 +82,22 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         className="grid gap-3 md:grid-cols-[1fr_auto]"
       >
-        <Card className="glass">
+        <Card className="glass border-[#D4A574]/25">
           <CardHeader>
             <CardTitle>Dashboard</CardTitle>
-            <CardDescription>Manage backups, commits, team access, and integrations.</CardDescription>
+            <CardDescription>
+              Manage private repos, encrypted backups, and approval-safe environment updates.
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-2">
-            <Badge>Auto backup ready</Badge>
+            <Badge>Private repo only</Badge>
             <Badge variant="muted">CLI synced</Badge>
-            <Badge variant="success">Realtime enabled</Badge>
+            <Badge variant="success">PIN guard active</Badge>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-[#D4A574]/25 bg-[#1B4D3E]/18">
           <CardHeader>
-            <CardTitle className="text-base">Quick Create</CardTitle>
+            <CardTitle className="text-base">Create Private Repo</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <Input
@@ -132,7 +134,7 @@ export default function DashboardPage() {
       </motion.section>
 
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Your Repositories</h2>
+        <h2 className="text-xl font-semibold text-[#f5f5f0]">Your Repositories</h2>
         <Button
           variant="ghost"
           size="sm"
@@ -146,13 +148,13 @@ export default function DashboardPage() {
 
       {reposQuery.isLoading ? (
         <Card>
-          <CardContent className="py-8 text-sm text-zinc-400">Loading repositories...</CardContent>
+          <CardContent className="py-8 text-sm text-[#a8b3af]">Loading repositories...</CardContent>
         </Card>
       ) : repos.length ? (
         <RepoList repos={repos} />
       ) : (
         <Card>
-          <CardContent className="py-10 text-center text-sm text-zinc-400">
+          <CardContent className="py-10 text-center text-sm text-[#a8b3af]">
             No repositories yet. Create one, then run `envii backup` from your project.
           </CardContent>
         </Card>

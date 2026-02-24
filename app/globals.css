@@ -2,7 +2,13 @@
 
 :root {
   --app-background: #02120e;
-  --foreground: #e7ecef;
+  --foreground: #f5f5f0;
+  --muted-foreground: #a8b3af;
+  --panel-bg: rgba(27, 77, 62, 0.22);
+  --panel-border: rgba(212, 165, 116, 0.2);
+  --amber: #d4a574;
+  --orange: #c85a3a;
+  --emerald: #1b4d3e;
 }
 
 html,
@@ -13,10 +19,7 @@ body {
 body {
   color-scheme: dark;
   color: var(--foreground);
-  background:
-    radial-gradient(1200px 520px at 5% -20%, rgba(212, 165, 116, 0.14), transparent 55%),
-    radial-gradient(900px 500px at 92% -10%, rgba(27, 77, 62, 0.24), transparent 58%),
-    var(--app-background);
+  background-color: transparent;
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
@@ -32,7 +35,7 @@ h6 {
 
 .bg-app-background {
   background:
-    radial-gradient(1200px 520px at 5% -20%, rgba(212, 165, 116, 0.14), transparent 55%),
+    radial-gradient(1200px 520px at 5% -20%, rgba(212, 165, 116, 0.1), transparent 55%),
     radial-gradient(900px 500px at 92% -10%, rgba(27, 77, 62, 0.24), transparent 58%),
     var(--app-background);
 }
@@ -42,17 +45,32 @@ h6 {
 }
 
 .glass {
-  background: linear-gradient(135deg, rgba(13, 36, 26, 0.72), rgba(2, 18, 14, 0.48));
+  background:
+    linear-gradient(135deg, rgba(2, 18, 14, 0.82), rgba(27, 77, 62, 0.18)),
+    linear-gradient(180deg, rgba(212, 165, 116, 0.05), transparent);
   backdrop-filter: blur(10px);
-  border-color: rgba(27, 77, 62, 0.5);
+  border-color: var(--panel-border);
+  box-shadow: 0 24px 50px -36px rgba(0, 0, 0, 0.7);
 }
 
 .grid-bg {
   background-image:
-    linear-gradient(rgba(212, 165, 116, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212, 165, 116, 0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-color: rgba(2, 18, 14, 0.4);
+    linear-gradient(rgba(212, 165, 116, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 165, 116, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-color: rgba(2, 18, 14, 0.55);
+}
+
+.themed-select {
+  border: 1px solid rgba(212, 165, 116, 0.2);
+  background: rgba(2, 18, 14, 0.75);
+  color: var(--foreground);
+}
+
+.themed-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.45);
+  border-color: rgba(212, 165, 116, 0.45);
 }
 
 @keyframes scan {

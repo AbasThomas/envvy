@@ -108,27 +108,27 @@ export default function SettingsPage() {
     <div className="space-y-4">
       <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
 
-      <Card>
+      <Card className="glass border-[#D4A574]/20">
         <CardHeader>
           <CardTitle>Billing Quick Actions</CardTitle>
-          <CardDescription>Use Paystack inline checkout without leaving the dashboard.</CardDescription>
+          <CardDescription>Run inline checkout without leaving the dashboard.</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <Button onClick={() => openPaystackInline("BASIC")}>Upgrade to Basic (₦800)</Button>
+          <Button onClick={() => openPaystackInline("BASIC")}>Upgrade to Basic (NGN 800)</Button>
           <Button variant="secondary" onClick={() => openPaystackInline("PRO")}>
-            Upgrade to Pro (₦2400)
+            Upgrade to Pro (NGN 2400)
           </Button>
           <Button variant="outline" onClick={() => openPaystackInline("TEAM")}>
-            Upgrade to Team (₦4000)
+            Upgrade to Team (NGN 4000)
           </Button>
         </CardContent>
       </Card>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="border-[#D4A574]/20 bg-[#02120e]/65">
           <CardHeader>
             <CardTitle>Slack Notifications</CardTitle>
-            <CardDescription>Ping your workspace when env changes are pushed.</CardDescription>
+            <CardDescription>Ping your workspace when env updates are pushed.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Input
@@ -149,12 +149,12 @@ export default function SettingsPage() {
               placeholder="Repo PIN (6 digits)"
             />
             <Button onClick={sendSlackPing} variant="outline">
-              Test Slack Alert
+              Test Slack alert
             </Button>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-[#D4A574]/20 bg-[#02120e]/65">
           <CardHeader>
             <CardTitle>CI/CD Export</CardTitle>
             <CardDescription>Generate secure dotenv payloads for GitHub Actions.</CardDescription>

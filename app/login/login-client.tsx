@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon, GithubIcon, MailIcon } from "lucide-react";
+import { ArrowRightIcon, GithubIcon, MailIcon, UserPlusIcon } from "lucide-react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,17 +15,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  name: z.string().min(2).optional(),
+  name: z.string().trim().min(2).max(64).optional().or(z.literal("")),
   email: z.string().email(),
   password: z.string().min(8),
+  referralCode: z.string().trim().max(64).optional().or(z.literal("")),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function LoginClient({ nextPath }: { nextPath: string }) {
+type LoginClientProps = {
+  nextPath: string;
+  mode: "login" | "signup";
+  defaultReferralCode?: string;
+};
+
+export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClientProps) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "register">("login");
   const [loading, setLoading] = useState(false);
+
+  const isSignup = mode === "signup";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -32,17 +41,23 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
       name: "",
       email: "",
       password: "",
+      referralCode: defaultReferralCode ?? "",
     },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
     setLoading(true);
     try {
-      if (mode === "register") {
+      if (isSignup) {
         const registerResponse = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
+          body: JSON.stringify({
+            name: values.name?.trim() || undefined,
+            email: values.email,
+            password: values.password,
+            referralCode: values.referralCode?.trim() || undefined,
+          }),
         });
         const registerData = await registerResponse.json();
         if (!registerResponse.ok) {
@@ -60,7 +75,7 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
         throw new Error(result?.error ?? "Could not sign in");
       }
 
-      toast.success(mode === "register" ? "Account created" : "Signed in");
+      toast.success(isSignup ? "Account created" : "Signed in");
       router.push(nextPath);
       router.refresh();
     } catch (error) {
@@ -70,63 +85,82 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
     }
   });
 
+  const alternateHref = isSignup
+    ? `/login?next=${encodeURIComponent(nextPath)}`
+    : `/signup?next=${encodeURIComponent(nextPath)}`;
+
   return (
-    <div className="mx-auto grid w-full max-w-5xl gap-4 md:grid-cols-[1.1fr_0.9fr]">
-      <Card className="glass border-emerald-800/40">
+    <div className="mx-auto grid w-full max-w-6xl gap-4 md:grid-cols-[1.1fr_0.9fr]">
+      <Card className="glass border-[#D4A574]/20">
         <CardHeader>
-          <CardTitle className="text-3xl">envii account</CardTitle>
+          <CardTitle className="text-3xl">{isSignup ? "Create your envii account" : "Welcome back to envii"}</CardTitle>
           <CardDescription>
-            {mode === "login"
-              ? "Welcome back. Continue syncing your env repos."
-              : "Create your account and start backing up .env files."}
+            {isSignup
+              ? "Set up your private repo workspace and secure every environment with a PIN."
+              : "Sign in to manage private repos, backups, and deployment-safe env history."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <form className="space-y-3" onSubmit={onSubmit}>
-            {mode === "register" ? (
-              <Input placeholder="Your name" {...form.register("name")} />
-            ) : null}
+            {isSignup ? <Input placeholder="Your name" {...form.register("name")} /> : null}
             <Input placeholder="you@example.com" {...form.register("email")} />
-            <Input type="password" placeholder="••••••••" {...form.register("password")} />
+            <Input type="password" placeholder="At least 8 characters" {...form.register("password")} />
+            {isSignup ? (
+              <Input placeholder="Referral code (optional)" {...form.register("referralCode")} />
+            ) : null}
             <Button className="w-full" disabled={loading}>
-              {loading
-                ? "Please wait..."
-                : mode === "login"
-                  ? "Sign in with email"
-                  : "Create account"}
+              {loading ? "Please wait..." : isSignup ? "Create account" : "Sign in with email"}
               <ArrowRightIcon className="ml-2 h-4 w-4" />
             </Button>
           </form>
+
           <div className="grid gap-2 sm:grid-cols-2">
-            <Button variant="outline" onClick={() => signIn("google", { callbackUrl: nextPath })}>
+            <Button
+              variant="outline"
+              onClick={() => signIn("google", { callbackUrl: nextPath })}
+            >
               <MailIcon className="mr-2 h-4 w-4" />
-              Google OAuth
+              Continue with Google
             </Button>
-            <Button variant="ghost" onClick={() => setMode(mode === "login" ? "register" : "login")}>
-              <GithubIcon className="mr-2 h-4 w-4" />
-              {mode === "login" ? "Need an account?" : "Already have an account?"}
-            </Button>
+            <Link href={alternateHref}>
+              <Button variant="ghost" className="w-full">
+                {isSignup ? (
+                  <>
+                    <GithubIcon className="mr-2 h-4 w-4" />
+                    I already have an account
+                  </>
+                ) : (
+                  <>
+                    <UserPlusIcon className="mr-2 h-4 w-4" />
+                    Create new account
+                  </>
+                )}
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="grid-bg border-amber-500/20">
+      <Card className="grid-bg border-[#D4A574]/15">
         <CardHeader>
-          <CardTitle className="text-xl">Keyboard shortcuts</CardTitle>
-          <CardDescription>Power features from day one</CardDescription>
+          <CardTitle className="text-xl">Private repo workflow</CardTitle>
+          <CardDescription>How envii is set up for secure operations</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-zinc-300">
+        <CardContent className="space-y-2 text-sm text-[#c8d2ce]">
           <p>
-            <kbd className="rounded bg-emerald-900/60 px-2 py-1 text-xs text-amber-200">Ctrl/Cmd + K</kbd> command palette
+            <kbd className="rounded bg-[#1B4D3E]/55 px-2 py-1 text-xs text-[#D4A574]">1</kbd> Create a private repo in dashboard
           </p>
           <p>
-            <kbd className="rounded bg-emerald-900/60 px-2 py-1 text-xs text-amber-200">Ctrl/Cmd + S</kbd> save env snapshot
+            <kbd className="rounded bg-[#1B4D3E]/55 px-2 py-1 text-xs text-[#D4A574]">2</kbd> Set a required 6-digit repo PIN
           </p>
           <p>
-            <kbd className="rounded bg-emerald-900/60 px-2 py-1 text-xs text-amber-200">Esc</kbd> close overlays
+            <kbd className="rounded bg-[#1B4D3E]/55 px-2 py-1 text-xs text-[#D4A574]">3</kbd> Run <code>envii backup</code> from CLI
           </p>
-          <p className="pt-3 text-zinc-400">
-            Free tier: 1 public repo • Basic: 5 private repos • Pro/Team: unlimited + social features.
+          <p>
+            <kbd className="rounded bg-[#1B4D3E]/55 px-2 py-1 text-xs text-[#D4A574]">4</kbd> Unlock repo with PIN before edits/deploys
+          </p>
+          <p className="pt-3 text-[#8d9a95]">
+            Every repo is private by default, and all critical actions require repo PIN validation.
           </p>
         </CardContent>
       </Card>

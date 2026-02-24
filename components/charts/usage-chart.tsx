@@ -28,8 +28,8 @@ export function UsageChart({ labels, values }: UsageChartProps) {
           {
             label: "Env commits",
             data: values,
-            borderColor: "rgb(34, 211, 238)",
-            backgroundColor: "rgba(34, 211, 238, 0.2)",
+            borderColor: "rgba(212, 165, 116, 0.95)",
+            backgroundColor: "rgba(212, 165, 116, 0.18)",
             tension: 0.35,
           },
         ],
@@ -38,17 +38,17 @@ export function UsageChart({ labels, values }: UsageChartProps) {
         responsive: true,
         plugins: {
           legend: {
-            labels: { color: "#d4d4d8" },
+            labels: { color: "#c8d2ce" },
           },
         },
         scales: {
           x: {
-            ticks: { color: "#a1a1aa" },
-            grid: { color: "rgba(39,39,42,0.6)" },
+            ticks: { color: "#8d9a95" },
+            grid: { color: "rgba(212, 165, 116, 0.18)" },
           },
           y: {
-            ticks: { color: "#a1a1aa" },
-            grid: { color: "rgba(39,39,42,0.6)" },
+            ticks: { color: "#8d9a95" },
+            grid: { color: "rgba(212, 165, 116, 0.18)" },
           },
         },
       }}

@@ -62,10 +62,10 @@ export default function ProfilePage() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-      <Card>
+      <Card className="glass border-[#D4A574]/20">
         <CardHeader>
           <CardTitle>Creator Profile</CardTitle>
-          <CardDescription>Public presence and community growth.</CardDescription>
+          <CardDescription>Manage your public identity and team-facing details.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap gap-2">
@@ -92,10 +92,10 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-[#D4A574]/20 bg-[#02120e]/65">
         <CardHeader>
           <CardTitle>Referral Program</CardTitle>
-          <CardDescription>Earn $1 equivalent credit for successful invites.</CardDescription>
+          <CardDescription>Earn $1 equivalent credit for every successful invite.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Input readOnly value={referralQuery.data?.referralUrl ?? ""} />
@@ -114,15 +114,18 @@ export default function ProfilePage() {
           <div className="space-y-2">
             {referralQuery.data?.referredUsers.length ? (
               referralQuery.data.referredUsers.map((user) => (
-                <div key={user.id} className="rounded-lg border border-emerald-900/40 bg-emerald-950/20 p-3 text-sm">
-                  <p className="text-zinc-100">{user.email}</p>
-                  <p className="text-zinc-400">
-                    {user.planTier} • Joined {new Date(user.createdAt).toLocaleDateString()}
+                <div
+                  key={user.id}
+                  className="rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 p-3 text-sm"
+                >
+                  <p className="text-[#f5f5f0]">{user.email}</p>
+                  <p className="text-[#a8b3af]">
+                    {user.planTier} - Joined {new Date(user.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-zinc-400">No referrals yet.</p>
+              <p className="text-sm text-[#a8b3af]">No referrals yet.</p>
             )}
           </div>
         </CardContent>

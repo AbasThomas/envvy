@@ -28,7 +28,7 @@ export function MonacoEnvEditor({ value, onChange, height = "420px" }: Props) {
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-zinc-800">
+    <div className="overflow-hidden rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/60 shadow-[0_24px_48px_-36px_rgba(0,0,0,0.7)]">
       <Editor
         language="shell"
         theme="vs-dark"

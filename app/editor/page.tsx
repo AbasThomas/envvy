@@ -107,7 +107,7 @@ export default function EditorPage() {
         </CardHeader>
         <CardContent className="grid gap-2 md:grid-cols-[1fr_180px_220px_180px_auto]">
           <select
-            className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+            className="themed-select rounded-xl px-3 py-2 text-sm"
             value={repoId}
             onChange={(event) => setRepoId(event.target.value)}
           >
@@ -119,7 +119,7 @@ export default function EditorPage() {
             ))}
           </select>
           <select
-            className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+            className="themed-select rounded-xl px-3 py-2 text-sm"
             value={environment}
             onChange={(event) =>
               setEnvironment(event.target.value as "development" | "staging" | "production")
@@ -166,9 +166,9 @@ export default function EditorPage() {
                 {effectiveOrderedKeys.map((key, index) => (
                   <li
                     key={key}
-                    className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2"
+                    className="flex items-center justify-between rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-3 py-2"
                   >
-                    <span className="text-sm text-zinc-200">{key}</span>
+                    <span className="text-sm text-[#c8d2ce]">{key}</span>
                     <div className="flex gap-1">
                       <Button size="sm" variant="ghost" onClick={() => moveKey(index, -1)}>
                         <ArrowUpIcon className="h-4 w-4" />
@@ -187,15 +187,15 @@ export default function EditorPage() {
             <CardHeader>
               <CardTitle>Realtime activity</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm text-zinc-300">
+            <CardContent className="space-y-2 text-sm text-[#c8d2ce]">
               {activity.length ? (
                 activity.map((line, idx) => (
-                  <p key={`${line}-${idx}`} className="rounded-md bg-zinc-900/60 p-2">
+                  <p key={`${line}-${idx}`} className="rounded-md border border-[#D4A574]/10 bg-[#02120e]/65 p-2">
                     {line}
                   </p>
                 ))
               ) : (
-                <p className="text-zinc-500">No events yet.</p>
+                <p className="text-[#8d9a95]">No events yet.</p>
               )}
             </CardContent>
           </Card>

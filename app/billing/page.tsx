@@ -27,18 +27,18 @@ export default function BillingPage() {
 
   return (
     <div className="space-y-5">
-      <Card className="grid-bg">
+      <Card className="grid-bg border-[#D4A574]/20">
         <CardHeader>
           <CardTitle className="text-2xl">Pricing and Billing</CardTitle>
           <CardDescription>
-            Built for affordability in African markets with NGN-first pricing.
+            Structured for fast growth teams with clear NGN-first pricing.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <Badge>Free: 1 public repo</Badge>
-          <Badge variant="success">Basic: ₦800 / $2</Badge>
-          <Badge variant="success">Pro: ₦2400 / $6</Badge>
-          <Badge variant="success">Team: ₦4000 / $10</Badge>
+          <Badge>Free: private-only trial</Badge>
+          <Badge variant="success">Basic: NGN 800 / $2</Badge>
+          <Badge variant="success">Pro: NGN 2400 / $6</Badge>
+          <Badge variant="success">Team: NGN 4000 / $10</Badge>
         </CardContent>
       </Card>
 
@@ -53,14 +53,14 @@ export default function BillingPage() {
             historyQuery.data.payments.map((payment) => (
               <div
                 key={payment.id}
-                className="flex flex-wrap items-center justify-between rounded-lg border border-emerald-900/40 bg-emerald-950/20 px-3 py-2"
+                className="flex flex-wrap items-center justify-between rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-3 py-2"
               >
                 <div className="text-sm">
-                  <p className="text-zinc-100">
-                    {payment.planTier} • {payment.currency} {payment.amount}
+                  <p className="text-[#f5f5f0]">
+                    {payment.planTier} - {payment.currency} {payment.amount}
                   </p>
-                  <p className="text-xs text-zinc-400">
-                    {payment.reference ?? "no-ref"} • {new Date(payment.createdAt).toLocaleString()}
+                  <p className="text-xs text-[#a8b3af]">
+                    {payment.reference ?? "no-ref"} - {new Date(payment.createdAt).toLocaleString()}
                   </p>
                 </div>
                 <Badge variant={payment.status === "ACTIVE" ? "success" : "muted"}>
@@ -69,7 +69,7 @@ export default function BillingPage() {
               </div>
             ))
           ) : (
-            <p className="text-sm text-zinc-400">No payments yet.</p>
+            <p className="text-sm text-[#a8b3af]">No payments yet.</p>
           )}
         </CardContent>
       </Card>

@@ -214,7 +214,9 @@ export default function RepoPage() {
   if (repoQuery.isLoading) {
     return (
       <Card>
-        <CardContent className="py-8 text-sm text-zinc-400">Validating PIN and loading repository...</CardContent>
+        <CardContent className="py-8 text-sm text-[#a8b3af]">
+          Validating PIN and loading repository...
+        </CardContent>
       </Card>
     );
   }
@@ -296,7 +298,7 @@ export default function RepoPage() {
 
           <div className="flex flex-wrap items-center gap-2">
             <select
-              className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+              className="themed-select rounded-xl px-3 py-2 text-sm"
               value={environment}
               onChange={(event) =>
                 setEnvironment(event.target.value as "development" | "staging" | "production")
@@ -337,12 +339,15 @@ export default function RepoPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {repo?.envs.map((entry) => (
-              <div key={entry.id} className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3">
-                <p className="text-sm text-zinc-200">
+              <div
+                key={entry.id}
+                className="rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 p-3"
+              >
+                <p className="text-sm text-[#c8d2ce]">
                   v{entry.version} - {entry.environment}
                 </p>
-                <p className="text-sm text-zinc-400">{entry.commitMsg}</p>
-                <p className="text-xs text-zinc-500">{entry.diffSummary ?? "No diff summary"}</p>
+                <p className="text-sm text-[#a8b3af]">{entry.commitMsg}</p>
+                <p className="text-xs text-[#8d9a95]">{entry.diffSummary ?? "No diff summary"}</p>
               </div>
             ))}
           </CardContent>
@@ -365,7 +370,7 @@ export default function RepoPage() {
             <CardTitle>Local Diff Preview</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="max-h-[320px] overflow-auto rounded-xl bg-zinc-950 p-3 text-xs text-zinc-300">
+            <pre className="max-h-[320px] overflow-auto rounded-xl bg-[#02120e] p-3 text-xs text-[#c8d2ce]">
               {localDiff}
             </pre>
           </CardContent>

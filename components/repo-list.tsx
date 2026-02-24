@@ -51,7 +51,7 @@ export function RepoList({ repos }: { repos: RepoItem[] }) {
                     </Badge>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 text-xs text-zinc-400">
+                <div className="flex items-center gap-4 text-xs text-[#8d9a95]">
                   <span className="inline-flex items-center gap-1">
                     <StarIcon className="h-3.5 w-3.5" /> {repo._count?.stars ?? 0}
                   </span>
