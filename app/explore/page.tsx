@@ -53,14 +53,17 @@ export default function ExplorePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
             <TrendingUpIcon className="h-5 w-5 text-cyan-300" />
-            Explore env repositories
+            Private repositories only
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
+          <p className="text-sm text-zinc-400">
+            envii is configured for private repos. Public explore is disabled.
+          </p>
           <div className="relative">
             <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <Input
-              placeholder="Search by name, README, or tags..."
+              placeholder="Search your private tags locally..."
               className="pl-10"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -79,7 +82,15 @@ export default function ExplorePage() {
         </CardContent>
       </Card>
 
-      <RepoList repos={repos} />
+      {repos.length ? (
+        <RepoList repos={repos} />
+      ) : (
+        <Card>
+          <CardContent className="py-8 text-sm text-zinc-400">
+            No public repositories are available.
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -21,8 +21,8 @@ export async function POST(request: NextRequest, { params }: Params) {
   const user = await getRequestUser(request);
   if (!user) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepo(user.id, repoId, "EDITOR");
-  if (!access.ok) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, repoId, "EDITOR");
+  if (!access.ok) return fail(access.error, access.status);
 
   const payload = await request.json().catch(() => null);
   const parsed = rollbackSchema.safeParse(payload);

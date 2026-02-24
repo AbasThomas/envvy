@@ -44,6 +44,7 @@ export function RepoList({ repos }: { repos: RepoItem[] }) {
               </CardHeader>
               <CardContent>
                 <div className="mb-3 flex flex-wrap gap-2">
+                  <Badge variant="warning">6-digit PIN required</Badge>
                   {repo.tags.slice(0, 5).map((tag) => (
                     <Badge key={tag} variant="muted">
                       #{tag}

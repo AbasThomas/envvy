@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
   const parsed = slackSchema.safeParse(body);
   if (!parsed.success) return fail("Invalid payload", 422, parsed.error.flatten());
 
-  const access = await canAccessRepo(user.id, parsed.data.repoId, "EDITOR");
-  if (!access.ok || !access.repo) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, parsed.data.repoId, "EDITOR");
+  if (!access.ok || !access.repo) return fail(access.error, access.status);
 
   const latest = await prisma.env.findFirst({
     where: { repoId: parsed.data.repoId },

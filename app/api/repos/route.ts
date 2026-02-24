@@ -1,3 +1,4 @@
+import { hash } from "bcryptjs";
 import type { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 import { z } from "zod";
@@ -5,15 +6,16 @@ import { z } from "zod";
 import { enforceRepoLimit, requireUser } from "@/lib/api-guards";
 import { fail, ok } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { isValidRepoPin } from "@/lib/repo-pin";
 import { slugify } from "@/lib/utils";
 
 const createRepoSchema = z.object({
   name: z.string().min(2).max(64),
   slug: z.string().min(2).max(64).optional(),
+  repoPin: z.string().regex(/^\d{6}$/, "Repository PIN must be exactly 6 digits"),
   description: z.string().max(1000).optional(),
   readme: z.string().max(100_000).optional(),
   tags: z.array(z.string().min(1).max(24)).default([]),
-  isPublic: z.boolean().default(false),
   defaultEnv: z.enum(["development", "staging", "production"]).default("development"),
 });
 
@@ -22,6 +24,10 @@ export async function GET(request: NextRequest) {
   const onlyPublic = searchParams.get("public") === "true";
   const query = searchParams.get("q")?.trim();
   const tag = searchParams.get("tag")?.trim();
+
+  if (onlyPublic) {
+    return ok({ repos: [] });
+  }
 
   const where: Prisma.RepoWhereInput = {
     ...(onlyPublic ? { isPublic: true } : {}),
@@ -37,40 +43,26 @@ export async function GET(request: NextRequest) {
     ...(tag ? { tags: { has: tag.toLowerCase() } } : {}),
   };
 
-  if (!onlyPublic) {
-    const { user, response } = await requireUser(request);
-    if (response || !user) return response;
-
-    const repos = await prisma.repo.findMany({
-      where: {
-        OR: [
-          { userId: user.id },
-          {
-            shares: {
-              some: { userId: user.id },
-            },
-          },
-        ],
-        ...(query ? where : {}),
-      },
-      include: {
-        owner: { select: { id: true, name: true, email: true, image: true } },
-        _count: { select: { stars: true, envs: true } },
-      },
-      orderBy: { updatedAt: "desc" },
-    });
-
-    return ok({ repos });
-  }
+  const { user, response } = await requireUser(request);
+  if (response || !user) return response;
 
   const repos = await prisma.repo.findMany({
-    where,
+    where: {
+      OR: [
+        { userId: user.id },
+        {
+          shares: {
+            some: { userId: user.id },
+          },
+        },
+      ],
+      ...(query ? where : {}),
+    },
     include: {
       owner: { select: { id: true, name: true, email: true, image: true } },
       _count: { select: { stars: true, envs: true } },
     },
-    orderBy: [{ starsCount: "desc" }, { viewsCount: "desc" }, { updatedAt: "desc" }],
-    take: 60,
+    orderBy: { updatedAt: "desc" },
   });
   return ok({ repos });
 }
@@ -85,7 +77,11 @@ export async function POST(request: NextRequest) {
     return fail("Invalid payload", 422, parsed.error.flatten());
   }
 
-  const limitCheck = await enforceRepoLimit(user.id, parsed.data.isPublic);
+  if (!isValidRepoPin(parsed.data.repoPin)) {
+    return fail("Repository PIN must be 6 digits", 422);
+  }
+
+  const limitCheck = await enforceRepoLimit(user.id, false);
   if (!limitCheck.allowed) {
     return fail(limitCheck.reason, 403);
   }
@@ -105,7 +101,7 @@ export async function POST(request: NextRequest) {
       slug,
       description: parsed.data.description,
       readme: parsed.data.readme,
-      isPublic: parsed.data.isPublic,
+      isPublic: false,
       tags: parsed.data.tags.map((t) => t.toLowerCase()),
       defaultEnv: parsed.data.defaultEnv,
     },
@@ -113,6 +109,12 @@ export async function POST(request: NextRequest) {
       owner: { select: { id: true, name: true, email: true } },
     },
   });
+
+  await prisma.$executeRaw`
+    UPDATE "Repo"
+    SET "repo_pin_hash" = ${await hash(parsed.data.repoPin, 10)}
+    WHERE "id" = ${repo.id}
+  `;
 
   await prisma.auditLog.create({
     data: {

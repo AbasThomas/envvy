@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { decryptJson, encryptJson } from "@/lib/crypto";
 import { envDiff } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
   const parsed = commitSchema.safeParse(payload);
   if (!parsed.success) return fail("Invalid payload", 422, parsed.error.flatten());
 
-  const access = await canAccessRepo(user.id, parsed.data.repoId, "EDITOR");
-  if (!access.ok || !access.repo) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, parsed.data.repoId, "EDITOR");
+  if (!access.ok || !access.repo) return fail(access.error, access.status);
 
   const latest = await prisma.env.findFirst({
     where: {

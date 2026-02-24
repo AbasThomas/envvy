@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -14,8 +14,8 @@ export async function GET(request: NextRequest, { params }: Params) {
   const user = await getRequestUser(request);
   if (!user) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepo(user.id, repoId, "EDITOR");
-  if (!access.ok) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, repoId, "EDITOR");
+  if (!access.ok) return fail(access.error, access.status);
 
   const shares = await prisma.share.findMany({
     where: { repoId },
@@ -35,8 +35,8 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   const user = await getRequestUser(request);
   if (!user) return fail("Unauthorized", 401);
 
-  const access = await canAccessRepo(user.id, repoId, "EDITOR");
-  if (!access.ok) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, repoId, "EDITOR");
+  if (!access.ok) return fail(access.error, access.status);
 
   const shareId = request.nextUrl.searchParams.get("shareId");
   if (!shareId) return fail("shareId is required", 422);

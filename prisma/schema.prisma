@@ -76,6 +76,7 @@ model Repo {
   userId        String      @map("user_id")
   name          String
   slug          String
+  repoPinHash   String?     @map("repo_pin_hash")
   description   String?     @db.Text
   readme        String?     @db.Text
   isPublic      Boolean     @default(false) @map("public")

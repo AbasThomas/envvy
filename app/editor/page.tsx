@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowDownIcon, ArrowUpIcon, MoveVerticalIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import { MonacoEnvEditor } from "@/components/editor/monaco-env-editor";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useRealtimeRepo, sendRealtimeRepoEvent } from "@/hooks/use-realtime-repo";
 import { parseDotEnv, stringifyDotEnv } from "@/lib/env";
 import { fetcher } from "@/lib/fetcher";
+import { isValidRepoPin, readStoredRepoPin, writeStoredRepoPin } from "@/lib/repo-pin";
 
 type RepoListResponse = {
   repos: Array<{ id: string; name: string; slug: string }>;
@@ -24,6 +25,7 @@ export default function EditorPage() {
   });
 
   const [repoId, setRepoId] = useState("");
+  const [repoPin, setRepoPin] = useState("");
   const [environment, setEnvironment] = useState<"development" | "staging" | "production">(
     "development",
   );
@@ -50,8 +52,13 @@ export default function EditorPage() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!repoId) throw new Error("Select a repository first");
+      if (!isValidRepoPin(repoPin)) throw new Error("Enter the 6-digit repository PIN first");
+      writeStoredRepoPin(repoId, repoPin);
       await fetcher("/api/envs", {
         method: "POST",
+        headers: {
+          "x-envii-repo-pin": repoPin,
+        },
         body: JSON.stringify({
           repoId,
           environment,
@@ -84,13 +91,21 @@ export default function EditorPage() {
     return acc;
   }, {});
 
+  useEffect(() => {
+    if (!repoId) {
+      setRepoPin("");
+      return;
+    }
+    setRepoPin(readStoredRepoPin(repoId) ?? "");
+  }, [repoId]);
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Collaborative Env Editor</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-2 md:grid-cols-[1fr_220px_220px_auto]">
+        <CardContent className="grid gap-2 md:grid-cols-[1fr_180px_220px_180px_auto]">
           <select
             className="rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
             value={repoId}
@@ -115,6 +130,13 @@ export default function EditorPage() {
             <option value="production">production</option>
           </select>
           <Input value={commitMsg} onChange={(event) => setCommitMsg(event.target.value)} />
+          <Input
+            placeholder="Repo PIN (6 digits)"
+            value={repoPin}
+            inputMode="numeric"
+            maxLength={6}
+            onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+          />
           <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
             {saveMutation.isPending ? "Saving..." : "Save + Broadcast"}
           </Button>

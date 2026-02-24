@@ -16,6 +16,12 @@ import { EnvGraph } from "@/components/visualizer/env-graph";
 import { useShortcuts } from "@/hooks/use-shortcuts";
 import { parseDotEnv, stringifyDotEnv } from "@/lib/env";
 import { fetcher } from "@/lib/fetcher";
+import {
+  clearStoredRepoPin,
+  isValidRepoPin,
+  readStoredRepoPin,
+  writeStoredRepoPin,
+} from "@/lib/repo-pin";
 
 type RepoDetailsResponse = {
   repo: {
@@ -52,23 +58,40 @@ export default function RepoPage() {
   const repoId = params.id;
   const queryClient = useQueryClient();
 
+  const [repoPinInput, setRepoPinInput] = useState("");
+  const [repoPin, setRepoPin] = useState<string | null>(null);
   const [envSource, setEnvSource] = useState("NODE_ENV=development\n");
   const [commitMsg, setCommitMsg] = useState("Update env values");
   const [environment, setEnvironment] = useState<"development" | "staging" | "production">(
     "development",
   );
   const [localDiff, setLocalDiff] = useState("");
+  const repoHeaders = repoPin ? { "x-envii-repo-pin": repoPin } : undefined;
+
+  useEffect(() => {
+    if (!repoId) return;
+    const storedPin = readStoredRepoPin(repoId);
+    if (!storedPin) return;
+    setRepoPin(storedPin);
+    setRepoPinInput(storedPin);
+  }, [repoId]);
 
   const repoQuery = useQuery({
-    queryKey: ["repo", repoId],
-    queryFn: () => fetcher<RepoDetailsResponse>(`/api/repos/${repoId}`),
+    queryKey: ["repo", repoId, repoPin],
+    queryFn: () =>
+      fetcher<RepoDetailsResponse>(`/api/repos/${repoId}`, {
+        headers: repoHeaders,
+      }),
+    enabled: !!repoId && !!repoPin,
   });
 
   const latestQuery = useQuery({
-    queryKey: ["repo-latest", repoId, environment],
+    queryKey: ["repo-latest", repoId, environment, repoPin],
     queryFn: () =>
-      fetcher<LatestEnvResponse>(`/api/envs/${repoId}/latest?environment=${environment}&decrypt=true`),
-    enabled: !!repoId,
+      fetcher<LatestEnvResponse>(`/api/envs/${repoId}/latest?environment=${environment}&decrypt=true`, {
+        headers: repoHeaders,
+      }),
+    enabled: !!repoId && !!repoPin,
   });
 
   const latestDecryptedSource = latestQuery.data?.env?.decrypted
@@ -85,6 +108,7 @@ export default function RepoPage() {
     mutationFn: () =>
       fetcher("/api/envs", {
         method: "POST",
+        headers: repoHeaders,
         body: JSON.stringify({
           repoId,
           environment,
@@ -138,6 +162,104 @@ export default function RepoPage() {
 
   const repo = repoQuery.data?.repo;
   const envKeys = useMemo(() => Object.keys(parseDotEnv(envSource)), [envSource]);
+
+  useEffect(() => {
+    if (!(repoQuery.error instanceof Error)) return;
+    if (!repoQuery.error.message.toLowerCase().includes("pin")) return;
+    clearStoredRepoPin(repoId);
+    setRepoPin(null);
+  }, [repoId, repoQuery.error]);
+
+  function unlockRepo() {
+    if (!isValidRepoPin(repoPinInput)) {
+      toast.error("Enter a valid 6-digit PIN");
+      return;
+    }
+
+    writeStoredRepoPin(repoId, repoPinInput);
+    setRepoPin(repoPinInput);
+    queryClient.invalidateQueries({ queryKey: ["repo", repoId] });
+  }
+
+  if (!repoPin) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Unlock Private Repository</CardTitle>
+          <CardDescription>Select repo, then enter your 6-digit PIN to continue.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Input
+            placeholder="Enter 6-digit PIN"
+            value={repoPinInput}
+            inputMode="numeric"
+            maxLength={6}
+            onChange={(event) =>
+              setRepoPinInput(event.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                unlockRepo();
+              }
+            }}
+          />
+          <Button onClick={unlockRepo} disabled={!isValidRepoPin(repoPinInput)}>
+            Unlock Repository
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (repoQuery.isLoading) {
+    return (
+      <Card>
+        <CardContent className="py-8 text-sm text-zinc-400">Validating PIN and loading repository...</CardContent>
+      </Card>
+    );
+  }
+
+  if (repoQuery.error instanceof Error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Repository Locked</CardTitle>
+          <CardDescription>{repoQuery.error.message}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Input
+            placeholder="Enter 6-digit PIN"
+            value={repoPinInput}
+            inputMode="numeric"
+            maxLength={6}
+            onChange={(event) =>
+              setRepoPinInput(event.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                unlockRepo();
+              }
+            }}
+          />
+          <div className="flex items-center gap-2">
+            <Button onClick={unlockRepo} disabled={!isValidRepoPin(repoPinInput)}>
+              Try PIN Again
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                clearStoredRepoPin(repoId);
+                setRepoPin(null);
+                setRepoPinInput("");
+              }}
+            >
+              Clear PIN
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-5">

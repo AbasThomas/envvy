@@ -5,7 +5,7 @@ import { z } from "zod";
 import { decryptJson } from "@/lib/crypto";
 import { envDiff } from "@/lib/env";
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
   const parsed = diffSchema.safeParse(payload);
   if (!parsed.success) return fail("Invalid payload", 422, parsed.error.flatten());
 
-  const access = await canAccessRepo(user.id, parsed.data.repoId, "VIEWER");
-  if (!access.ok) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, parsed.data.repoId, "VIEWER");
+  if (!access.ok) return fail(access.error, access.status);
 
   const [from, to] = await Promise.all([
     prisma.env.findFirst({

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { fetcher } from "@/lib/fetcher";
+import { isValidRepoPin } from "@/lib/repo-pin";
 
 declare global {
   interface Window {
@@ -19,13 +20,21 @@ declare global {
 
 export default function SettingsPage() {
   const [repoId, setRepoId] = useState("");
+  const [repoPin, setRepoPin] = useState("");
   const [slackWebhook, setSlackWebhook] = useState("");
   const [ciRepoId, setCiRepoId] = useState("");
+  const [ciRepoPin, setCiRepoPin] = useState("");
 
   async function sendSlackPing() {
     try {
+      if (!isValidRepoPin(repoPin)) {
+        throw new Error("Enter the 6-digit repository PIN");
+      }
       await fetcher("/api/integrations/slack", {
         method: "POST",
+        headers: {
+          "x-envii-repo-pin": repoPin,
+        },
         body: JSON.stringify({
           repoId,
           webhookUrl: slackWebhook,
@@ -73,8 +82,14 @@ export default function SettingsPage() {
 
   async function generateCiExport() {
     try {
+      if (!isValidRepoPin(ciRepoPin)) {
+        throw new Error("Enter the 6-digit repository PIN");
+      }
       const data = await fetcher<{ dotenv: string; guide: string }>("/api/integrations/ci", {
         method: "POST",
+        headers: {
+          "x-envii-repo-pin": ciRepoPin,
+        },
         body: JSON.stringify({
           repoId: ciRepoId,
           provider: "github-actions",
@@ -126,6 +141,13 @@ export default function SettingsPage() {
               onChange={(event) => setSlackWebhook(event.target.value)}
               placeholder="Slack webhook URL"
             />
+            <Input
+              value={repoPin}
+              onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="Repo PIN (6 digits)"
+            />
             <Button onClick={sendSlackPing} variant="outline">
               Test Slack Alert
             </Button>
@@ -142,6 +164,13 @@ export default function SettingsPage() {
               value={ciRepoId}
               onChange={(event) => setCiRepoId(event.target.value)}
               placeholder="Repo ID"
+            />
+            <Input
+              value={ciRepoPin}
+              onChange={(event) => setCiRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="Repo PIN (6 digits)"
             />
             <Button onClick={generateCiExport} variant="outline">
               Copy production dotenv

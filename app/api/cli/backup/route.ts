@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
-import { enforceRepoLimit } from "@/lib/api-guards";
 import { encryptJson } from "@/lib/crypto";
 import { fail, ok } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
@@ -11,7 +10,6 @@ import { slugify } from "@/lib/utils";
 const backupSchema = z.object({
   repoSlug: z.string().min(2).max(64),
   repoName: z.string().min(2).max(64).optional(),
-  isPublic: z.boolean().default(false),
   environment: z.enum(["development", "staging", "production"]).default("development"),
   commitMsg: z.string().default("CLI backup"),
   env: z.record(z.string(), z.string()).optional(),
@@ -37,19 +35,10 @@ export async function POST(request: NextRequest) {
   });
 
   if (!repo) {
-    const repoLimit = await enforceRepoLimit(user.id, parsed.data.isPublic);
-    if (!repoLimit.allowed) return fail(repoLimit.reason, 403);
-
-    repo = await prisma.repo.create({
-      data: {
-        userId: user.id,
-        name: parsed.data.repoName ?? parsed.data.repoSlug,
-        slug: slugify(parsed.data.repoSlug),
-        isPublic: parsed.data.isPublic,
-        tags: [],
-        defaultEnv: parsed.data.environment,
-      },
-    });
+    return fail(
+      "Repository not found. Create it in the dashboard first and configure a 6-digit repository PIN.",
+      404,
+    );
   }
 
   const latest = await prisma.env.findFirst({

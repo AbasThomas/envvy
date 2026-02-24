@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { fail, ok } from "@/lib/http";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -45,11 +46,8 @@ export async function POST(request: NextRequest) {
   const parsed = createTemplateSchema.safeParse(payload);
   if (!parsed.success) return fail("Invalid payload", 422, parsed.error.flatten());
 
-  const repo = await prisma.repo.findUnique({
-    where: { id: parsed.data.repoId },
-  });
-  if (!repo) return fail("Repository not found", 404);
-  if (repo.userId !== user.id) return fail("Only owner can publish templates", 403);
+  const access = await canAccessRepoWithPin(request, user.id, parsed.data.repoId, "OWNER");
+  if (!access.ok || !access.repo) return fail(access.error, access.status);
 
   const template = await prisma.template.create({
     data: {

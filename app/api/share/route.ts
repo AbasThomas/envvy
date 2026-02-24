@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { enforceFeature } from "@/lib/api-guards";
 import { fail, ok } from "@/lib/http";
-import { canAccessRepo } from "@/lib/repo-access";
+import { canAccessRepoWithPin } from "@/lib/repo-access";
 import { prisma } from "@/lib/prisma";
 import { getRequestUser } from "@/lib/server-auth";
 
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
   const parsed = shareSchema.safeParse(payload);
   if (!parsed.success) return fail("Invalid payload", 422, parsed.error.flatten());
 
-  const access = await canAccessRepo(user.id, parsed.data.repoId, "EDITOR");
-  if (!access.ok || !access.repo) return fail("Forbidden", 403);
+  const access = await canAccessRepoWithPin(request, user.id, parsed.data.repoId, "EDITOR");
+  if (!access.ok || !access.repo) return fail(access.error, access.status);
 
   if (!parsed.data.inviteEmail && !parsed.data.inviteUserId) {
     return fail("inviteEmail or inviteUserId is required", 422);
