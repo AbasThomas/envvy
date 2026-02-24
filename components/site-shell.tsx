@@ -11,7 +11,10 @@ type SiteShellProps = {
 export function SiteShell({ children }: SiteShellProps) {
   const pathname = usePathname();
   const isLanding = pathname === "/";
-  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup");
+  const isAuthPage =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/onboarding");
 
   if (isLanding) {
     return <main className="w-full">{children}</main>;

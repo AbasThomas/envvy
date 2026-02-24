@@ -6,7 +6,7 @@ type Props = {
 
 export default async function SignupPage({ searchParams }: Props) {
   const params = await searchParams;
-  const nextPath = params.next ?? "/dashboard";
+  const nextPath = params.next ?? "/onboarding";
   const referralCode = params.ref;
 
   return (

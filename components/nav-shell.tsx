@@ -46,7 +46,10 @@ export function NavShell() {
 
             <nav className="hidden items-center gap-1 md:flex">
               {links.map((link) => {
-                const active = pathname.startsWith(link.href);
+                const active =
+                  pathname === link.href ||
+                  pathname.startsWith(link.href + "/") ||
+                  (link.href === "/repos" && pathname.startsWith("/repo/"));
                 const Icon = link.icon;
                 return (
                   <Link
