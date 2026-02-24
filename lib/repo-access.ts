@@ -1,4 +1,4 @@
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import type { ShareRole } from "@prisma/client";
 import type { NextRequest } from "next/server";
 
@@ -82,11 +82,25 @@ export async function canAccessRepoWithPin(
   const repoPinHash = pinRows[0]?.repo_pin_hash ?? null;
 
   if (!repoPinHash) {
+    if (access.repo.userId !== userId) {
+      return {
+        ok: false as const,
+        status: 403,
+        error: "Repository PIN is not configured",
+        repo: null,
+      };
+    }
+
+    const initializedHash = await hash(pin, 10);
+    await prisma.$executeRaw`
+      UPDATE "Repo"
+      SET "repo_pin_hash" = ${initializedHash}
+      WHERE "id" = ${access.repo.id}
+    `;
+
     return {
-      ok: false as const,
-      status: 403,
-      error: "Repository PIN is not configured",
-      repo: null,
+      ok: true as const,
+      repo: access.repo,
     };
   }
 

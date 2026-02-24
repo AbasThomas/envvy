@@ -137,7 +137,10 @@ export default function EditorPage() {
             maxLength={6}
             onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
           />
-          <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
+          <Button
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending || !repoId || !isValidRepoPin(repoPin)}
+          >
             {saveMutation.isPending ? "Saving..." : "Save + Broadcast"}
           </Button>
         </CardContent>
