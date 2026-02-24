@@ -61,7 +61,7 @@
             <a href="#" class="hover:text-[#D4A574]">Docs</a>
             <a href="#" class="hover:text-[#D4A574]">Enterprise</a>
           </nav>
-          <a href="#" class="group relative inline-flex items-center gap-2 rounded-md border border-[#D4A574]/30 bg-[#1B4D3E]/30 px-5 py-2.5 text-sm font-semibold text-[#D4A574] transition-all hover:bg-[#1B4D3E]/50 hover:text-white" style="--border-gradient: linear-gradient(135deg, rgba(212,165,116,0), rgba(212,165,116,.4), rgba(212,165,116,0)); --border-radius-before: 6px;">See It In Action</a>
+          <a href="#cli-demo" class="group relative inline-flex items-center gap-2 rounded-md border border-[#D4A574]/30 bg-[#1B4D3E]/30 px-5 py-2.5 text-sm font-semibold text-[#D4A574] transition-all hover:bg-[#1B4D3E]/50 hover:text-white" style="--border-gradient: linear-gradient(135deg, rgba(212,165,116,0), rgba(212,165,116,.4), rgba(212,165,116,0)); --border-radius-before: 6px;">Live CLI Demo</a>
         </div>
       </div>
     </div>
@@ -194,8 +194,8 @@ envii push</pre>
         <p class="mt-4 text-[#a8b3af]">Template your env operations, review them with your team, and execute with rollback safety.</p>
       </div>
       <div class="px-6 sm:px-12 flex gap-3" id="pb-tabs">
-        <button data-key="collab" class="pb-tab rounded-xl border border-[#D4A574]/30 bg-[#1B4D3E]/30 px-4 py-2.5 text-sm font-medium text-[#D4A574]">Real-time collaboration</button>
-        <button data-key="templates" class="pb-tab rounded-xl border border-[#D4A574]/10 bg-[#02120e]/50 px-4 py-2.5 text-sm font-medium text-[#a8b3af]">Parameterized templates</button>
+        <button data-key="collab" class="pb-tab rounded-xl border border-[#D4A574]/30 bg-[#1B4D3E]/30 px-4 py-2.5 text-sm font-medium text-[#D4A574]">Incident collaboration</button>
+        <button data-key="templates" class="pb-tab rounded-xl border border-[#D4A574]/10 bg-[#02120e]/50 px-4 py-2.5 text-sm font-medium text-[#a8b3af]">Env templates</button>
         <button data-key="safety" class="pb-tab rounded-xl border border-[#D4A574]/10 bg-[#02120e]/50 px-4 py-2.5 text-sm font-medium text-[#a8b3af]">Safety and approvals</button>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 p-6 sm:p-12 gap-6">
@@ -261,14 +261,14 @@ s.save("v1.2.1", "Safer rollback guardrails");</pre>
         <div class="grid grid-cols-1 gap-12 border-b border-[#D4A574]/10 pb-12 md:grid-cols-2 lg:grid-cols-5">
           <div class="lg:col-span-2">
             <div class="mb-4 inline-flex h-[30px] w-[50px] rounded bg-[url(https://cdn.midjourney.com/ff6f82bf-d54f-4853-a2a4-321ec87a6422/0_0.png?w=800&q=80)] bg-cover bg-center invert sepia brightness-90 saturate-150 hue-rotate-15"></div>
-            <p class="mb-6 text-sm text-[#6e7d78]">Enterprise automation that handles your critical workflows so your team focuses on strategy, not firefighting.</p>
+            <p class="mb-6 text-sm text-[#6e7d78]">envii helps teams back up, version, and restore environment variables with confidence across CLI and dashboard workflows.</p>
           </div>
           <div><h4 class="mb-4 text-sm font-bold text-white">Product</h4><ul class="space-y-3 text-sm text-[#a8b3af]"><li>Features</li><li>Pricing</li><li>Updates</li></ul></div>
           <div><h4 class="mb-4 text-sm font-bold text-white">Resources</h4><ul class="space-y-3 text-sm text-[#a8b3af]"><li>Documentation</li><li>Guides</li><li>API Reference</li></ul></div>
           <div><h4 class="mb-4 text-sm font-bold text-white">Company</h4><ul class="space-y-3 text-sm text-[#a8b3af]"><li>About</li><li>Blog</li><li>Careers</li></ul></div>
         </div>
         <div class="flex flex-col items-center justify-between gap-4 pt-8 md:flex-row">
-          <p class="text-sm text-[#6e7d78]">2025 Runlyx. All rights reserved.</p>
+          <p class="text-sm text-[#6e7d78]">2026 envii. All rights reserved.</p>
           <div class="flex items-center gap-6"><a href="#" class="text-sm text-[#6e7d78] hover:text-[#D4A574]">Privacy</a><a href="#" class="text-sm text-[#6e7d78] hover:text-[#D4A574]">Terms</a></div>
         </div>
       </div>
@@ -276,20 +276,71 @@ s.save("v1.2.1", "Safer rollback guardrails");</pre>
   </div>
 
   <script>
-    const demoEl = document.querySelector("#typing-demo");
-    if (demoEl) {
-      const textStr = "Optimizing query performance...";
-      let idx = 0;
-      const typeLoop = () => {
-        if (idx < textStr.length) {
-          demoEl.textContent += textStr.charAt(idx++);
-          setTimeout(typeLoop, 80);
-        } else {
-          setTimeout(() => { demoEl.textContent = ""; idx = 0; typeLoop(); }, 2000);
+    (function () {
+      const streamEl = document.querySelector("#cli-stream");
+      if (!streamEl) return;
+
+      const steps = [
+        { cmd: "envii login", out: ["Logged in as sre@company.dev", "Token stored in local profile."] },
+        { cmd: "envii init", out: ["Initialized envii in this repository.", "Detected environment: production"] },
+        { cmd: "envii backup", out: ["Encrypted backup created.", "Version 41 saved successfully."] },
+        { cmd: "envii restore payments-api", out: ["Fetched latest snapshot.", "Restored .env for payments-api"] },
+        { cmd: "envii list", out: ["payments-api", "checkout-worker", "auth-service"] },
+        { cmd: "envii commit -m \"Rotate JWT secret\"", out: ["Change note staged for next push."] },
+        { cmd: "envii push", out: ["Backed up payments-api at version 42."] },
+        { cmd: "envii pull", out: ["Pulled latest env into local workspace."] },
+        { cmd: "envii fork repo_42", out: ["Fork created in your account."] },
+        { cmd: "envii star repo_42", out: ["Repository starred."] },
+        { cmd: "envii watch", out: ["Watching .env files for changes...", "Auto-backup prompt enabled."] }
+      ];
+
+      let stepIndex = 0;
+      let outIndex = -1;
+
+      function appendLine(text, type) {
+        const row = document.createElement("div");
+        row.className = type === "cmd" ? "text-[#D4A574]" : "text-[#b8c6c1]";
+        row.textContent = text;
+        streamEl.appendChild(row);
+        streamEl.scrollTop = streamEl.scrollHeight;
+      }
+
+      function resetLoop() {
+        streamEl.innerHTML = "";
+        stepIndex = 0;
+        outIndex = -1;
+        setTimeout(tick, 500);
+      }
+
+      function tick() {
+        const step = steps[stepIndex];
+        if (!step) {
+          setTimeout(resetLoop, 2200);
+          return;
         }
-      };
-      typeLoop();
-    }
+
+        if (outIndex === -1) {
+          appendLine("$ " + step.cmd, "cmd");
+          outIndex = 0;
+          setTimeout(tick, 450);
+          return;
+        }
+
+        if (outIndex < step.out.length) {
+          appendLine(step.out[outIndex], "out");
+          outIndex += 1;
+          setTimeout(tick, 320);
+          return;
+        }
+
+        appendLine(" ", "out");
+        stepIndex += 1;
+        outIndex = -1;
+        setTimeout(tick, 420);
+      }
+
+      tick();
+    })();
   </script>
 
   <script>
@@ -304,25 +355,25 @@ s.save("v1.2.1", "Safer rollback guardrails");</pre>
       };
       const data = {
         collab: {
-          title: "Real-time collaboration",
-          tagline: "EDIT SCRIPTS TOGETHER WITH LIVE CURSORS AND VERSIONED SAVES.",
-          p1: "Edit remediation scripts together in real time with live cursors, inline comments and versioned saves.",
-          p2: "Everyone on call sees changes immediately so your team can author and run fixes together during an incident.",
-          code: `// shared live script\nconst s = Runlyx.Script.open("recover-workers");\n\ns.apply("restartWorkers()", { user: "sys_admin" });\ns.comment(2, "Checking memory thresholds");\ns.save("v1.2.1", "Added safety verification");`
+          title: "Incident collaboration",
+          tagline: "REVIEW AND RESTORE ENV CHANGES TOGETHER IN REAL TIME.",
+          p1: "Collaborate on remediation with shared cursors, comments, and versioned playbook saves.",
+          p2: "Everyone on call sees the same env change timeline before anything is pushed to production.",
+          code: `// shared env workflow\nconst s = Envii.Playbook.open("recover-env");\n\ns.apply("envii restore payments-api");\ns.comment(2, "Verify checksum before promotion");\ns.save("v1.2.1", "Safer rollback guardrails");`
         },
         templates: {
-          title: "Parameterized templates",
-          tagline: "REUSABLE PLAYBOOKS WITH TYPED INPUTS AND SANE DEFAULTS.",
-          p1: "Publish reusable playbooks with typed inputs and sane defaults so teams can standardize fixes.",
-          p2: "Validate inputs before execution and stamp every run with immutable parameters for auditing.",
-          code: `// template inputs\ntype Params = { service: "api" | "worker", region: string }\n\nconst s = Runlyx.Template.use<Params>("scale-service");\ns.run({ service: "worker", region: "us-east-1" });`
+          title: "Parameterized env templates",
+          tagline: "REUSABLE ENV WORKFLOWS WITH TYPED INPUTS.",
+          p1: "Standardize repetitive operations like secret rotation, region overrides, and restore scopes.",
+          p2: "Every run records immutable input values for audit and rollback confidence.",
+          code: `// template inputs\ntype Params = { repo: string, env: "staging" | "production" }\n\nconst t = Envii.Template.use<Params>("rotate-secret");\nt.run({ repo: "payments-api", env: "production" });`
         },
         safety: {
           title: "Safety and approvals",
-          tagline: "GUARDRAILS, DRY RUNS, AND MULTI-STEP APPROVALS.",
-          p1: "Protect production with guardrails: dry runs, blast-radius checks and multi-step approvals.",
-          p2: "Require reviewers on sensitive playbooks and log every decision for compliance.",
-          code: `// safety first\nconst p = Runlyx.Playbook("db-failover");\np.requireApproval({ teams: ["SRE"], min: 2 });\np.dryRun().assert("replicasHealthy > 2");\np.execute();`
+          tagline: "DRY RUNS, GUARDRAILS, AND MULTI-STEP APPROVALS.",
+          p1: "Protect production env updates with policy checks, dry runs, and reviewer requirements.",
+          p2: "Each approval and execution path is logged for compliance and post-incident review.",
+          code: `// safety first\nconst p = Envii.Playbook("prod-env-change");\np.requireApproval({ teams: ["SRE"], min: 2 });\np.dryRun().assert("secretsMissing === 0");\np.execute();`
         }
       };
       function setActive(key) {
@@ -342,8 +393,8 @@ s.save("v1.2.1", "Safer rollback guardrails");</pre>
     (function () {
       const state = { plan: "starter", billing: "monthly" };
       const plans = {
-        starter: { name: "Starter", tagline: "Great for small teams launching their first workflows.", priceMonthly: 19, priceAnnual: 190, cta: "Request Demo", features: ["UP TO 5 PROJECTS", "BASIC AUTOMATIONS", "30-DAY RUN HISTORY", "EMAIL SUPPORT"] },
-        pro: { name: "Pro", tagline: "Built for growing teams and production workloads.", priceMonthly: 49, priceAnnual: 490, cta: "Choose Plan", features: ["UP TO 50 PROJECTS", "ADVANCED AUTOMATIONS", "PRIORITY QUEUING", "PRIORITY SUPPORT"] }
+        starter: { name: "Basic", tagline: "Great for teams securing their first production env workflows.", priceMonthly: 800, priceAnnual: 8000, cta: "Choose Plan", features: ["UNLIMITED ENV BACKUPS", "ROLLBACK HISTORY", "CLI + DASHBOARD SYNC", "EMAIL SUPPORT"] },
+        pro: { name: "Pro", tagline: "Built for growing teams and production workloads.", priceMonthly: 2400, priceAnnual: 24000, cta: "Upgrade to Pro", features: ["ADVANCED AUTOMATIONS", "AUDIT TRAILS", "PRIORITY QUEUING", "PRIORITY SUPPORT"] }
       };
       const els = {
         tabs: document.querySelectorAll(".billing-tab"),
@@ -359,7 +410,7 @@ s.save("v1.2.1", "Safer rollback guardrails");</pre>
         const cfg = plans[state.plan] || plans.starter;
         els.name.textContent = cfg.name;
         els.tagline.textContent = cfg.tagline.toUpperCase();
-        els.price.textContent = "$" + (state.billing === "monthly" ? cfg.priceMonthly : cfg.priceAnnual);
+        els.price.textContent = "NGN " + (state.billing === "monthly" ? cfg.priceMonthly : cfg.priceAnnual);
         els.suffix.textContent = state.billing === "monthly" ? "/month" : "/yr";
         els.cta.textContent = cfg.cta;
         els.list.innerHTML = cfg.features.map((f) => `<li>${f}</li>`).join("");
