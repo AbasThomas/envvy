@@ -10,6 +10,26 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { withPrismaResilience } from "@/lib/prisma-resilience";
 
+const PROD_CANONICAL_URL = "https://envii.pxxl.pro";
+const LOCALHOST_URL_REGEX = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\/.*)?$/i;
+
+function normalizeAuthUrl(value?: string) {
+  const trimmed = value?.trim();
+  if (!trimmed) return undefined;
+  return trimmed.replace(/\/+$/, "");
+}
+
+const configuredAuthUrl = normalizeAuthUrl(process.env.AUTH_URL ?? process.env.NEXTAUTH_URL);
+const fallbackAuthUrl =
+  process.env.NODE_ENV === "production" && (!configuredAuthUrl || LOCALHOST_URL_REGEX.test(configuredAuthUrl))
+    ? PROD_CANONICAL_URL
+    : configuredAuthUrl;
+
+if (fallbackAuthUrl) {
+  process.env.AUTH_URL = fallbackAuthUrl;
+  process.env.NEXTAUTH_URL = fallbackAuthUrl;
+}
+
 function createAuthApiToken() {
   return `${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
 }
@@ -132,6 +152,8 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   session: { strategy: "jwt" },
   providers,
   pages: {

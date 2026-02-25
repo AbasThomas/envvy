@@ -1,4 +1,4 @@
-# Getting Started
+﻿# Getting Started
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Create a `.env` file at the project root. All variables below are required unles
 ### Database
 
 ```env
-# PostgreSQL connection string (URL-encode special chars in password, e.g. @ → %40)
+# PostgreSQL connection string (URL-encode special chars in password, e.g. @ â†’ %40)
 DATABASE_URL="postgresql://user:password@host:5432/dbname?schema=public"
 
 # Direct connection URL for Prisma migrations (bypasses connection pooling)
@@ -40,21 +40,24 @@ DIRECT_URL="postgresql://user:password@host:5432/dbname?schema=public"
 ### Authentication
 
 ```env
-# NextAuth.js secret — must be at least 32 characters
+# Auth.js / NextAuth secret - must be at least 32 characters
+AUTH_SECRET="your-secret-at-least-32-characters-long"
 NEXTAUTH_SECRET="your-secret-at-least-32-characters-long"
 
 # Full public URL of your app (no trailing slash)
+# Production: https://envii.pxxl.pro
+AUTH_URL="http://localhost:3000"
 NEXTAUTH_URL="http://localhost:3000"
+AUTH_TRUST_HOST="true"
 ```
-
 ### OAuth Providers (Optional)
 
 ```env
-# Google OAuth — create at console.cloud.google.com
+# Google OAuth â€” create at console.cloud.google.com
 GOOGLE_CLIENT_ID="xxx.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="GOCSPX-xxx"
 
-# GitHub OAuth — create at github.com/settings/developers
+# GitHub OAuth â€” create at github.com/settings/developers
 GITHUB_CLIENT_ID="Iv1.xxx"
 GITHUB_CLIENT_SECRET="xxx"
 ```
@@ -62,14 +65,14 @@ GITHUB_CLIENT_SECRET="xxx"
 ### Encryption
 
 ```env
-# Optional — falls back to NEXTAUTH_SECRET if not set
+# Optional â€” falls back to NEXTAUTH_SECRET if not set
 ENCRYPTION_MASTER_KEY="your-32-char-encryption-master-key"
 ```
 
 ### Payment (Paystack)
 
 ```env
-# Paystack API keys — get from dashboard.paystack.com
+# Paystack API keys â€” get from dashboard.paystack.com
 PAYSTACK_SECRET_KEY="sk_live_xxx"
 PAYSTACK_PUBLIC_KEY="pk_live_xxx"
 
@@ -82,7 +85,7 @@ PAYSTACK_PLAN_TEAM_CODE="PLN_xxx"
 ### AI (Optional)
 
 ```env
-# Groq LLM API — get from console.groq.com
+# Groq LLM API â€” get from console.groq.com
 GROQ_API_KEY="gsk_xxx"
 
 # Model name (default: llama-3.3-70b-versatile)
@@ -143,6 +146,15 @@ npm run build
 npm run start
 ```
 
+If you are deploying to `https://envii.pxxl.pro`, set these in production:
+
+```env
+AUTH_URL="https://envii.pxxl.pro"
+NEXTAUTH_URL="https://envii.pxxl.pro"
+ENVII_API_URL="https://envii.pxxl.pro"
+AUTH_TRUST_HOST="true"
+```
+
 ### Other Scripts
 
 | Script | Description |
@@ -162,7 +174,7 @@ npm run start
 
 1. Navigate to `http://localhost:3000/signup`
 2. Fill in name, email, password, confirm password, and accept terms
-3. Click **Create Account** — you are redirected to `/onboarding`
+3. Click **Create Account** â€” you are redirected to `/onboarding`
 4. On the onboarding page, generate your **6-digit CLI PIN**
 5. The PIN is bcryptjs-hashed and stored; you are redirected to `/dashboard`
 6. Create your first repo from the dashboard

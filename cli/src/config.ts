@@ -12,6 +12,10 @@ export type EnviiConfig = {
 const ENVII_DIR = join(homedir(), ".envii");
 const CONFIG_FILE = join(ENVII_DIR, "config.json");
 const PROJECT_FILE = join(process.cwd(), ".envii.json");
+const PROD_API_URL = "https://envii.pxxl.pro";
+const DEFAULT_API_URL =
+  process.env.ENVII_API_URL ??
+  (process.env.NODE_ENV === "development" ? "http://localhost:3000" : PROD_API_URL);
 
 export function getConfigPath() {
   return CONFIG_FILE;
@@ -20,7 +24,7 @@ export function getConfigPath() {
 export function readGlobalConfig(): EnviiConfig {
   if (!existsSync(CONFIG_FILE)) {
     return {
-      baseUrl: process.env.ENVII_API_URL ?? "http://localhost:3000",
+      baseUrl: DEFAULT_API_URL,
     };
   }
 

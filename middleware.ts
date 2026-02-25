@@ -43,7 +43,7 @@ export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const token = await getToken({
     req,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   });
   const hasBearerAuth = req.headers.get("authorization")?.startsWith("Bearer ") ?? false;
 

@@ -30,6 +30,10 @@ import { startEnvWatcher } from "./watcher.js";
 dotenv.config();
 
 const CLI_PIN_REGEX = /^\d{6}$/;
+const PROD_API_URL = "https://envii.pxxl.pro";
+const DEFAULT_API_URL =
+  process.env.ENVII_API_URL ??
+  (process.env.NODE_ENV === "development" ? "http://localhost:3000" : PROD_API_URL);
 
 const program = new Command();
 program
@@ -48,7 +52,7 @@ program
         type: "input",
         name: "baseUrl",
         message: "API base URL",
-        default: existingConfig.baseUrl ?? process.env.ENVII_API_URL ?? "http://localhost:3000",
+        default: existingConfig.baseUrl ?? DEFAULT_API_URL,
       },
       {
         type: "input",
