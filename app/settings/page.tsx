@@ -250,13 +250,16 @@ export default function SettingsPage() {
               onChange={(event) => setSlackWebhook(event.target.value)}
               placeholder="Slack webhook URL"
             />
-            <Input
-              value={repoPin}
-              onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="Repo PIN (6 digits)"
-            />
+            <div className="space-y-1">
+              <Input
+                value={repoPin}
+                onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="Repo PIN (6 digits)"
+              />
+              <p className="text-xs text-[#8d9a95]">{repoPin.length}/6 digits</p>
+            </div>
             <Button onClick={sendSlackPing} variant="outline">
               Test Slack alert
             </Button>
@@ -274,13 +277,16 @@ export default function SettingsPage() {
               onChange={(event) => setCiRepoId(event.target.value)}
               placeholder="Repo ID"
             />
-            <Input
-              value={ciRepoPin}
-              onChange={(event) => setCiRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              inputMode="numeric"
-              maxLength={6}
-              placeholder="Repo PIN (6 digits)"
-            />
+            <div className="space-y-1">
+              <Input
+                value={ciRepoPin}
+                onChange={(event) => setCiRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="Repo PIN (6 digits)"
+              />
+              <p className="text-xs text-[#8d9a95]">{ciRepoPin.length}/6 digits</p>
+            </div>
             <Button onClick={generateCiExport} variant="outline">
               Copy production dotenv
             </Button>

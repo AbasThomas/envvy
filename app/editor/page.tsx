@@ -130,13 +130,16 @@ export default function EditorPage() {
             <option value="production">production</option>
           </select>
           <Input value={commitMsg} onChange={(event) => setCommitMsg(event.target.value)} />
-          <Input
-            placeholder="Repo PIN (6 digits)"
-            value={repoPin}
-            inputMode="numeric"
-            maxLength={6}
-            onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-          />
+          <div className="space-y-1">
+            <Input
+              placeholder="Repo PIN (6 digits)"
+              value={repoPin}
+              inputMode="numeric"
+              maxLength={6}
+              onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+            />
+            <p className="text-xs text-[#8d9a95]">{repoPin.length}/6 digits</p>
+          </div>
           <Button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending || !repoId || !isValidRepoPin(repoPin)}

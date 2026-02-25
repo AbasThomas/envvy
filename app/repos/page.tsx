@@ -172,14 +172,17 @@ export default function ReposPage() {
           </div>
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold uppercase text-[#a8b3af]">6-Digit PIN</label>
-            <Input
-              placeholder="000000"
-              className="bg-[#02120e]/60 border-[#D4A574]/15"
-              value={repoPin}
-              inputMode="numeric"
-              maxLength={6}
-              onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-            />
+            <div className="space-y-1">
+              <Input
+                placeholder="000000"
+                className="bg-[#02120e]/60 border-[#D4A574]/15"
+                value={repoPin}
+                inputMode="numeric"
+                maxLength={6}
+                onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+              />
+              <p className="text-xs text-[#8d9a95]">{repoPin.length}/6 digits</p>
+            </div>
           </div>
           <div className="flex items-end">
             <Button

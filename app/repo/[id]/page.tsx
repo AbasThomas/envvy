@@ -373,20 +373,23 @@ export default function RepoPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Input
-            placeholder="Enter 6-digit PIN"
-            value={repoPinInput}
-            inputMode="numeric"
-            maxLength={6}
-            onChange={(event) =>
-              setRepoPinInput(event.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                unlockRepo();
+          <div className="space-y-1">
+            <Input
+              placeholder="Enter 6-digit PIN"
+              value={repoPinInput}
+              inputMode="numeric"
+              maxLength={6}
+              onChange={(event) =>
+                setRepoPinInput(event.target.value.replace(/\D/g, "").slice(0, 6))
               }
-            }}
-          />
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  unlockRepo();
+                }
+              }}
+            />
+            <p className="text-xs text-[#8d9a95]">{repoPinInput.length}/6 digits</p>
+          </div>
           <div className="flex items-center gap-2">
             <Button onClick={unlockRepo} disabled={!isValidRepoPin(repoPinInput)}>
               Unlock Repository
@@ -606,15 +609,18 @@ export default function RepoPage() {
                 <option value="private">Private</option>
                 <option value="public">Public</option>
               </select>
-              <Input
-                placeholder="New 6-digit repository PIN (optional)"
-                inputMode="numeric"
-                maxLength={6}
-                value={settingsRepoPin}
-                onChange={(event) =>
-                  setSettingsRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))
-                }
-              />
+              <div className="space-y-1">
+                <Input
+                  placeholder="New 6-digit repository PIN (optional)"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={settingsRepoPin}
+                  onChange={(event) =>
+                    setSettingsRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
+                />
+                <p className="text-xs text-[#8d9a95]">{settingsRepoPin.length}/6 digits</p>
+              </div>
               <Button onClick={() => settingsMutation.mutate()} disabled={settingsMutation.isPending}>
                 Save Settings
               </Button>

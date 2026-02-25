@@ -187,14 +187,17 @@ export default function DashboardPage() {
                   <option value="private">Private</option>
                   <option value="public">Public</option>
                 </select>
-                <Input
-                  placeholder="6-digit PIN"
-                  className="w-28 bg-[#02120e]/60 border-[#D4A574]/15"
-                  value={repoPin}
-                  inputMode="numeric"
-                  maxLength={6}
-                  onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                />
+                <div className="w-28 space-y-1">
+                  <Input
+                    placeholder="6-digit PIN"
+                    className="w-full bg-[#02120e]/60 border-[#D4A574]/15"
+                    value={repoPin}
+                    inputMode="numeric"
+                    maxLength={6}
+                    onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                  />
+                  <p className="text-[10px] text-[#8d9a95]">{repoPin.length}/6</p>
+                </div>
               </div>
             </div>
             <Button
