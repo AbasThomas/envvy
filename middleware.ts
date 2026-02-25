@@ -45,6 +45,7 @@ export default async function middleware(req: NextRequest) {
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
+  const hasBearerAuth = req.headers.get("authorization")?.startsWith("Bearer ") ?? false;
 
   if (pathname.startsWith("/api/")) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
@@ -63,7 +64,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    if (protectedApiPrefixes.some((prefix) => pathname.startsWith(prefix)) && !token) {
+    if (protectedApiPrefixes.some((prefix) => pathname.startsWith(prefix)) && !token && !hasBearerAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -92,6 +92,16 @@ type LatestEnvResponse = {
 
 type RepoTab = "history" | "editor" | "settings" | "audit";
 
+function isExpectedRepoAccessError(error: unknown) {
+  if (!(error instanceof Error)) return false;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes("pin") ||
+    message.includes("unauthorized") ||
+    message.includes("forbidden")
+  );
+}
+
 export default function RepoPage() {
   const params = useParams<{ id: string }>();
   const repoIdentifier = params.id;
@@ -101,6 +111,7 @@ export default function RepoPage() {
 
   const [repoPinInput, setRepoPinInput] = useState("");
   const [repoPin, setRepoPin] = useState<string | null>(null);
+  const [hydratedRepoIdentifier, setHydratedRepoIdentifier] = useState<string | null>(null);
 
   const [envSource, setEnvSource] = useState("NODE_ENV=development\n");
   const [commitMsg, setCommitMsg] = useState("Update env values");
@@ -122,10 +133,12 @@ export default function RepoPage() {
   useEffect(() => {
     if (!repoIdentifier) return;
     const storedPin = readStoredRepoPin(repoIdentifier);
-    if (!storedPin) return;
-    setRepoPin(storedPin);
-    setRepoPinInput(storedPin);
+    setRepoPin(storedPin ?? null);
+    setRepoPinInput(storedPin ?? "");
+    setHydratedRepoIdentifier(repoIdentifier);
   }, [repoIdentifier]);
+
+  const isRepoPinHydrated = hydratedRepoIdentifier === repoIdentifier;
 
   const repoQuery = useQuery({
     queryKey: ["repo", repoIdentifier, repoPin],
@@ -133,21 +146,40 @@ export default function RepoPage() {
       fetcher<RepoDetailsResponse>(`/api/repos/${encodeURIComponent(repoIdentifier)}`, {
         headers: repoHeaders,
       }),
-    enabled: !!repoIdentifier,
+    enabled: !!repoIdentifier && isRepoPinHydrated,
+    retry: (failureCount, error) => {
+      if (isExpectedRepoAccessError(error)) return false;
+      return failureCount < 2;
+    },
   });
 
   const resolvedRepoId = repoQuery.data?.repo.id ?? null;
+  const hasAnySnapshots = (repoQuery.data?.repo._count.envs ?? 0) > 0;
 
-  const latestQuery = useQuery({
+  const latestQuery = useQuery<LatestEnvResponse | null>({
     queryKey: ["repo-latest", resolvedRepoId, environment, repoPin],
-    queryFn: () =>
-      fetcher<LatestEnvResponse>(
-        `/api/envs/${resolvedRepoId}/latest?environment=${environment}&decrypt=true`,
-        {
-          headers: repoHeaders,
-        },
-      ),
-    enabled: !!resolvedRepoId,
+    queryFn: async () => {
+      try {
+        return await fetcher<LatestEnvResponse>(
+          `/api/envs/${resolvedRepoId}/latest?environment=${environment}&decrypt=true`,
+          {
+            headers: repoHeaders,
+          },
+        );
+      } catch (error) {
+        if (error instanceof Error && error.message.toLowerCase().includes("no environment snapshot")) {
+          return null;
+        }
+        throw error;
+      }
+    },
+    enabled: !!resolvedRepoId && hasAnySnapshots,
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message.toLowerCase().includes("no environment snapshot")) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 
   const latestDecryptedSource = latestQuery.data?.env?.decrypted
@@ -353,13 +385,34 @@ export default function RepoPage() {
   const repoPinRequired =
     repoQuery.error instanceof Error && repoQuery.error.message.toLowerCase().includes("pin");
 
-  if (repoQuery.isLoading) {
+  if (!isRepoPinHydrated || repoQuery.isLoading) {
     return (
-      <Card>
-        <CardContent className="py-8 text-sm text-[#a8b3af]">
-          Loading repository...
-        </CardContent>
-      </Card>
+      <div className="app-page">
+        <Card>
+          <CardHeader>
+            <div className="h-7 w-52 animate-pulse rounded bg-[#1B4D3E]/30" />
+            <div className="h-4 w-80 animate-pulse rounded bg-[#1B4D3E]/20" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <div className="h-6 w-20 animate-pulse rounded-full bg-[#1B4D3E]/20" />
+              <div className="h-6 w-24 animate-pulse rounded-full bg-[#1B4D3E]/20" />
+              <div className="h-6 w-20 animate-pulse rounded-full bg-[#1B4D3E]/20" />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <div className="h-9 w-28 animate-pulse rounded-lg bg-[#1B4D3E]/20" />
+              <div className="h-9 w-24 animate-pulse rounded-lg bg-[#1B4D3E]/20" />
+              <div className="h-9 w-28 animate-pulse rounded-lg bg-[#1B4D3E]/20" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="py-8 text-sm text-[#a8b3af]">
+            Loading repository details...
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -440,6 +493,9 @@ export default function RepoPage() {
             <div>
               <CardTitle className="text-2xl">{repo?.name ?? "Repository"}</CardTitle>
               <CardDescription>{repo?.description ?? "No description provided."}</CardDescription>
+              {repoQuery.isFetching ? (
+                <p className="mt-1 text-xs text-[#8d9a95]">Refreshing repository details...</p>
+              ) : null}
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => starMutation.mutate()}>
@@ -512,6 +568,16 @@ export default function RepoPage() {
 
       {activeTab === "editor" ? (
         <>
+          {!latestQuery.isLoading && (!hasAnySnapshots || !latestQuery.data?.env) ? (
+            <Card>
+              <CardContent className="pt-6 text-sm text-[#a8b3af]">
+                No snapshot found for <span className="text-[#f5f5f0]">{environment}</span> yet.
+                Run <code className="ml-1 rounded bg-[#02120e]/70 px-1 py-0.5 text-xs text-[#D4A574]">envii backup</code>{" "}
+                in your project folder (or commit from this editor) to load environment values.
+              </CardContent>
+            </Card>
+          ) : null}
+
           <Card>
             <CardContent className="space-y-3 pt-6">
               <div className="flex flex-wrap items-center gap-2">

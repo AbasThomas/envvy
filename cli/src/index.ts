@@ -43,12 +43,7 @@ program
   .option("--pin", "Authenticate with your 6-digit CLI PIN")
   .action(async (options: { pin?: boolean }) => {
     const existingConfig = readGlobalConfig();
-    const answers = await inquirer.prompt<{
-      baseUrl: string;
-      email: string;
-      password: string;
-      pin: string;
-    }>([
+    const loginQuestions = [
       {
         type: "input",
         name: "baseUrl",
@@ -67,6 +62,9 @@ program
               type: "password" as const,
               name: "pin",
               message: "Enter your 6-digit PIN",
+              mask: "*",
+              validate: (value: string) =>
+                CLI_PIN_REGEX.test(value) ? true : "PIN must be exactly 6 digits.",
             },
           ]
         : [
@@ -76,7 +74,14 @@ program
               message: "Password",
             },
           ]),
-    ]);
+    ] as Parameters<typeof inquirer.prompt>[0];
+
+    const answers = await inquirer.prompt<{
+      baseUrl: string;
+      email: string;
+      password: string;
+      pin: string;
+    }>(loginQuestions);
 
     const api = createApiClient();
     api.defaults.baseURL = answers.baseUrl;
@@ -91,6 +96,10 @@ program
       );
       data = res.data;
     } catch (err: unknown) {
+      if (err instanceof Error && !(err as { response?: unknown }).response) {
+        throw err;
+      }
+
       const e = err as { response?: { status?: number; data?: { error?: string } }; code?: string };
       if (e.code === "ECONNREFUSED" || e.code === "ECONNABORTED") {
         throw new Error(`Cannot reach server at ${answers.baseUrl}. Is it running?`);
@@ -134,12 +143,14 @@ program
           type: "password",
           name: "pin",
           message: "New 6-digit PIN",
+          mask: "*",
           when: (ctx) => ctx.setupPin,
         },
         {
           type: "password",
           name: "confirmPin",
           message: "Confirm PIN",
+          mask: "*",
           when: (ctx) => ctx.setupPin,
         },
       ]);
@@ -205,6 +216,7 @@ program
         type: "password",
         name: "repoPin",
         message: "Repository 6-digit PIN",
+        mask: "*",
         validate: (value: string) => (CLI_PIN_REGEX.test(value) ? true : "PIN must be exactly 6 digits."),
       },
       {
