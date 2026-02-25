@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon } from "@/components/ui/icons";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 

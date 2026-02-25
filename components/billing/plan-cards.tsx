@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PLAN_MATRIX, PLAN_ORDER } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 
-import { CheckIcon, SparklesIcon, RefreshCwIcon } from "lucide-react";
+import { CheckIcon, SparklesIcon, RefreshCwIcon } from "@/components/ui/icons";
 
 export function PlanCards() {
   const [loadingTier, setLoadingTier] = useState<string | null>(null);

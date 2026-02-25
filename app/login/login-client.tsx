@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, RefreshCwIcon, ShieldCheckIcon } from "lucide-react";
+import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, RefreshCwIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -168,11 +168,8 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
 
         <div className="flex flex-col justify-center space-y-8 pr-4">
           <div className="space-y-4">
-            <Link href="/" className="inline-flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-lg font-bold text-[#02120e] shadow-lg shadow-[#D4A574]/20">
-                EN
-              </span>
-              <span className="text-2xl font-black tracking-tighter text-[#f5f5f0]">envii</span>
+            <Link href="/" className="inline-flex items-center">
+              <span className="text-3xl font-black tracking-tighter text-[#f5f5f0]">Envii</span>
             </Link>
             <h1 className="text-5xl font-black tracking-tight text-[#f5f5f0] lg:text-6xl">
               {isSignup ? (

@@ -28,10 +28,10 @@ export function SiteShell({ children }: SiteShellProps) {
     <div className="flex min-h-screen w-full bg-[#02120e]">
       <NavShell mode="sidebar" />
       <div className="flex flex-1 flex-col">
-        <div className="px-4 pt-4 sm:px-6 lg:px-8 lg:hidden">
+        <div className="px-2 pt-2 sm:px-4 sm:pt-4 lg:hidden">
           <NavShell mode="top" />
         </div>
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 pb-12 pt-4 sm:px-6 lg:px-8 lg:pt-8">
+        <main className="mx-auto w-full max-w-[1400px] flex-1 px-2 pb-8 pt-4 sm:px-6 sm:pb-12 lg:px-8 lg:pt-8">
           {children}
         </main>
       </div>

@@ -6,13 +6,14 @@ import {
   GitForkIcon,
   HistoryIcon,
   PencilLineIcon,
+  RefreshCwIcon,
   SaveIcon,
   Settings2Icon,
   ShieldCheckIcon,
   SparklesIcon,
   StarIcon,
   UserPlus2Icon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import { useParams } from "next/navigation";
 import type { ComponentType } from "react";
 import { useEffect, useMemo, useState } from "react";
@@ -34,6 +35,7 @@ import {
   readStoredRepoPin,
   writeStoredRepoPin,
 } from "@/lib/repo-pin";
+import { cn } from "@/lib/utils";
 
 type RepoDetailsResponse = {
   repo: {
@@ -43,6 +45,7 @@ type RepoDetailsResponse = {
     description: string | null;
     isPublic: boolean;
     tags: string[];
+    stars?: Array<{ id: string }>;
     _count: { stars: number; envs: number; shares: number };
     envs: Array<{
       id: string;
@@ -486,306 +489,448 @@ export default function RepoPage() {
   ];
 
   return (
-    <div className="app-page">
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <CardTitle className="text-2xl">{repo?.name ?? "Repository"}</CardTitle>
-              <CardDescription>{repo?.description ?? "No description provided."}</CardDescription>
-              {repoQuery.isFetching ? (
-                <p className="mt-1 text-xs text-[#8d9a95]">Refreshing repository details...</p>
-              ) : null}
+    <div className="app-page space-y-6 sm:space-y-10">
+      <Card className="glass relative overflow-hidden border-[#D4A574]/20 bg-[#02120e]/60">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#D4A574]/5 blur-3xl" />
+        <CardHeader className="relative z-10 pb-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A574]">
+                <div className="h-1 w-8 rounded-full bg-gradient-to-r from-[#D4A574] to-transparent" />
+                <span>Vault Details</span>
+              </div>
+              <CardTitle className="text-3xl font-black tracking-tight text-[#f5f5f0] sm:text-4xl">
+                {repo?.name ?? "Repository"}
+              </CardTitle>
+              <CardDescription className="max-w-2xl text-sm leading-relaxed text-[#a8b3af] sm:text-base">
+                {repo?.description ?? "No description provided for this secure vault."}
+              </CardDescription>
+              {repoQuery.isFetching && (
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase text-[#D4A574]/60">
+                  <RefreshCwIcon className="h-3 w-3 animate-spin" />
+                  Refreshing...
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => starMutation.mutate()}>
-                <StarIcon className="mr-2 h-4 w-4" />
-                Star
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 gap-2 border-[#D4A574]/20 bg-[#1B4D3E]/10 px-4 text-[11px] font-black uppercase tracking-widest text-[#f5f5f0] hover:bg-[#1B4D3E]/20"
+                onClick={() => starMutation.mutate()}
+              >
+                <StarIcon className={cn("h-4 w-4", repo?.stars?.length ? "fill-[#D4A574] text-[#D4A574]" : "text-[#8d9a95]")} />
+                {repo?._count.stars ?? 0} Stars
               </Button>
-              <Button variant="outline" size="sm" onClick={() => forkMutation.mutate()}>
-                <GitForkIcon className="mr-2 h-4 w-4" />
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-10 gap-2 border-[#D4A574]/20 bg-[#1B4D3E]/10 px-4 text-[11px] font-black uppercase tracking-widest text-[#f5f5f0] hover:bg-[#1B4D3E]/20"
+                onClick={() => forkMutation.mutate()}
+              >
+                <GitForkIcon className="h-4 w-4 text-[#D4A574]" />
                 Fork
               </Button>
+              <Badge className={cn(
+                "h-10 flex items-center px-4 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#D4A574]/10",
+                repo?.isPublic 
+                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
+                  : "bg-[#D4A574] text-[#02120e]"
+              )}>
+                {repo?.isPublic ? "Public" : "Private"}
+              </Badge>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{repo?.isPublic ? "public" : "private"}</Badge>
-            <Badge variant="muted">{repo?._count.envs ?? 0} snapshots</Badge>
-            <Badge variant="muted">{repo?._count.stars ?? 0} stars</Badge>
-            <Badge variant="muted">{repo?._count.shares ?? 0} collaborators</Badge>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+
+        <CardContent className="relative z-10 border-t border-[#D4A574]/10 pt-0">
+          <nav className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6 py-4 sm:-mx-8 sm:px-8">
             {tabs.map((tab) => {
-              const Icon = tab.icon;
               const active = activeTab === tab.key;
+              const Icon = tab.icon;
               return (
-                <Button
+                <button
                   key={tab.key}
-                  size="sm"
-                  variant={active ? "default" : "outline"}
                   onClick={() => setActiveTab(tab.key)}
+                  className={cn(
+                    "flex shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all",
+                    active
+                      ? "bg-[#1B4D3E]/40 text-[#f5f5f0] shadow-lg shadow-[#1B4D3E]/20 ring-1 ring-[#D4A574]/20"
+                      : "text-[#8d9a95] hover:bg-[#1B4D3E]/10 hover:text-[#f5f5f0]"
+                  )}
                 >
-                  <Icon className="mr-2 h-4 w-4" />
+                  <Icon className={cn("h-4 w-4", active ? "text-[#D4A574]" : "text-[#8d9a95]")} />
                   {tab.label}
-                </Button>
+                </button>
               );
             })}
-          </div>
+          </nav>
         </CardContent>
       </Card>
 
-      {activeTab === "history" ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Environment History</CardTitle>
-            <CardDescription>Versioned snapshots and commit trail.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {repo?.envs.length ? (
-              repo.envs.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 p-3"
-                >
-                  <p className="text-sm text-[#c8d2ce]">
-                    v{entry.version} - {entry.environment}
-                  </p>
-                  <p className="text-sm text-[#a8b3af]">{entry.commitMsg}</p>
-                  <p className="text-xs text-[#8d9a95]">
-                    {entry.diffSummary ?? "No diff summary"} -{" "}
-                    {new Date(entry.createdAt).toLocaleString()}
-                  </p>
+      <div className="space-y-10">
+        {activeTab === "history" ? (
+          <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
+            <CardHeader>
+              <CardTitle className="text-xl font-black tracking-tight text-[#f5f5f0]">Environment History</CardTitle>
+              <CardDescription className="text-[#a8b3af]">Versioned snapshots and commit trail for this vault.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {repo?.envs.length ? (
+                <div className="grid gap-4">
+                  {repo.envs.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="group relative overflow-hidden rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/10 p-5 transition-all hover:border-[#D4A574]/30 hover:bg-[#1B4D3E]/20"
+                    >
+                      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#D4A574]/5 blur-2xl transition-all group-hover:bg-[#D4A574]/10" />
+                      <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-[#D4A574] text-[10px] font-black uppercase text-[#02120e]">
+                              v{entry.version}
+                            </Badge>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">
+                              {entry.environment}
+                            </span>
+                          </div>
+                          <p className="text-sm font-bold text-[#f5f5f0]">{entry.commitMsg}</p>
+                          <div className="flex items-center gap-3 text-[10px] text-[#8d9a95]">
+                            <span className="flex items-center gap-1">
+                              <HistoryIcon className="h-3 w-3" />
+                              {new Date(entry.createdAt).toLocaleString()}
+                            </span>
+                            <span className="h-1 w-1 rounded-full bg-[#D4A574]/30" />
+                            <span>{entry.diffSummary ?? "Initial snapshot"}</span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-lg border border-[#D4A574]/10 bg-[#1B4D3E]/10 px-3 text-[10px] font-black uppercase tracking-widest text-[#f5f5f0] hover:bg-[#D4A574] hover:text-[#02120e]"
+                        >
+                          Restore
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-[#a8b3af]">No snapshots yet.</p>
-            )}
-          </CardContent>
-        </Card>
-      ) : null}
-
-      {activeTab === "editor" ? (
-        <>
-          {!latestQuery.isLoading && (!hasAnySnapshots || !latestQuery.data?.env) ? (
-            <Card>
-              <CardContent className="pt-6 text-sm text-[#a8b3af]">
-                No snapshot found for <span className="text-[#f5f5f0]">{environment}</span> yet.
-                Run <code className="ml-1 rounded bg-[#02120e]/70 px-1 py-0.5 text-xs text-[#D4A574]">envii backup</code>{" "}
-                in your project folder (or commit from this editor) to load environment values.
-              </CardContent>
-            </Card>
-          ) : null}
-
-          <Card>
-            <CardContent className="space-y-3 pt-6">
-              <div className="flex flex-wrap items-center gap-2">
-                <select
-                  className="themed-select rounded-xl px-3 py-2 text-sm"
-                  value={environment}
-                  onChange={(event) =>
-                    setEnvironment(
-                      event.target.value as "development" | "staging" | "production",
-                    )
-                  }
-                >
-                  <option value="development">development</option>
-                  <option value="staging">staging</option>
-                  <option value="production">production</option>
-                </select>
-                <Input value={commitMsg} onChange={(event) => setCommitMsg(event.target.value)} />
-                <Button variant="secondary" onClick={calculateLocalDiff}>
-                  Local Diff
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={async () => {
-                    const ai = await fetcher<{ suggestions: string[]; commitSummary: string }>(
-                      "/api/ai/suggestions",
-                      {
-                        method: "POST",
-                        body: JSON.stringify({ env: parseDotEnv(envSource) }),
-                      },
-                    );
-                    setCommitMsg(ai.commitSummary);
-                    toast.success(ai.suggestions.join("\n"));
-                  }}
-                >
-                  <SparklesIcon className="mr-2 h-4 w-4" />
-                  AI Suggest
-                </Button>
-                <Button size="sm" onClick={() => commitMutation.mutate()}>
-                  <SaveIcon className="mr-2 h-4 w-4" />
-                  Commit
-                </Button>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#D4A574]/20 py-12 text-center">
+                  <div className="mb-4 rounded-full bg-[#1B4D3E]/20 p-4">
+                    <HistoryIcon className="h-8 w-8 text-[#D4A574]/40" />
+                  </div>
+                  <p className="text-sm font-bold text-[#f5f5f0]">No snapshots yet</p>
+                  <p className="mt-1 text-xs text-[#a8b3af]">Create your first snapshot in the Editor tab.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
+        ) : null}
 
-          <MonacoEnvEditor value={envSource} onChange={setEnvSource} />
+        {activeTab === "editor" ? (
+          <div className="space-y-6">
+            {!latestQuery.isLoading && (!hasAnySnapshots || !latestQuery.data?.env) ? (
+              <Card className="border-[#D4A574]/20 bg-[#D4A574]/5">
+                <CardContent className="flex items-start gap-4 pt-6">
+                  <div className="rounded-full bg-[#D4A574]/10 p-2">
+                    <SparklesIcon className="h-5 w-5 text-[#D4A574]" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-[#f5f5f0]">
+                      No snapshot found for <span className="text-[#D4A574]">{environment}</span>
+                    </p>
+                    <p className="text-xs leading-relaxed text-[#a8b3af]">
+                      Run <code className="rounded bg-[#02120e]/70 px-1.5 py-0.5 font-mono text-[#D4A574]">envii backup</code> in your project folder or commit from this editor to load environment values.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Env Visualizer</CardTitle>
-                <CardDescription>Grouped by key suffix dependencies.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <EnvGraph keys={envKeys} />
+            <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
+              <CardContent className="space-y-4 pt-6">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="relative">
+                    <select
+                      className="themed-select h-11 w-full rounded-xl border border-[#D4A574]/20 bg-[#1B4D3E]/10 px-4 text-xs font-black uppercase tracking-widest text-[#f5f5f0]"
+                      value={environment}
+                      onChange={(event) =>
+                        setEnvironment(
+                          event.target.value as "development" | "staging" | "production",
+                        )
+                      }
+                    >
+                      <option value="development">development</option>
+                      <option value="staging">staging</option>
+                      <option value="production">production</option>
+                    </select>
+                  </div>
+                  <div className="lg:col-span-2">
+                    <Input 
+                      className="h-11 rounded-xl border-[#D4A574]/20 bg-[#1B4D3E]/10 text-sm"
+                      placeholder="Commit message..."
+                      value={commitMsg} 
+                      onChange={(event) => setCommitMsg(event.target.value)} 
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      className="h-11 flex-1 gap-2 border-[#D4A574]/20 bg-[#1B4D3E]/10 text-[10px] font-black uppercase tracking-widest text-[#f5f5f0] hover:bg-[#1B4D3E]/20"
+                      onClick={calculateLocalDiff}
+                    >
+                      Diff
+                    </Button>
+                    <Button 
+                      className="h-11 flex-1 gap-2 bg-[#D4A574] text-[10px] font-black uppercase tracking-widest text-[#02120e] hover:bg-[#D4A574]/90"
+                      onClick={() => commitMutation.mutate()}
+                    >
+                      <SaveIcon className="h-3.5 w-3.5" />
+                      Commit
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 gap-2 text-[10px] font-black uppercase tracking-widest text-[#D4A574] hover:bg-[#D4A574]/10"
+                    onClick={async () => {
+                      const aiPromise = fetcher<{ suggestions: string[]; commitSummary: string }>(
+                        "/api/ai/suggestions",
+                        {
+                          method: "POST",
+                          body: JSON.stringify({ env: parseDotEnv(envSource) }),
+                        },
+                      );
+                      toast.promise(aiPromise, {
+                        loading: "AI is analyzing your env...",
+                        success: (data) => {
+                          setCommitMsg(data.commitSummary);
+                          return "AI suggestions ready!";
+                        },
+                        error: "AI analysis failed",
+                      });
+                    }}
+                  >
+                    <SparklesIcon className="h-3.5 w-3.5" />
+                    AI Suggest Message
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <div className="overflow-hidden rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/60 shadow-2xl">
+              <MonacoEnvEditor value={envSource} onChange={setEnvSource} />
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
+                <CardHeader>
+                  <CardTitle className="text-lg font-black tracking-tight text-[#f5f5f0]">Env Visualizer</CardTitle>
+                  <CardDescription className="text-xs text-[#a8b3af]">Grouped by key suffix dependencies.</CardDescription>
+                </CardHeader>
+                <CardContent className="h-[360px]">
+                  <EnvGraph keys={envKeys} />
+                </CardContent>
+              </Card>
+
+              <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
+                <CardHeader>
+                  <CardTitle className="text-lg font-black tracking-tight text-[#f5f5f0]">Local Diff Preview</CardTitle>
+                  <CardDescription className="text-xs text-[#a8b3af]">Compare editor changes against latest snapshot.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <pre className="max-h-[360px] overflow-auto rounded-xl bg-[#02120e]/80 p-4 font-mono text-[11px] leading-relaxed text-[#c8d2ce]">
+                    {localDiff || "No diff calculated yet. Click Diff to see changes."}
+                  </pre>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : null}
+
+        {activeTab === "settings" ? (
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
               <CardHeader>
-                <CardTitle>Local Diff Preview</CardTitle>
-                <CardDescription>Compare editor changes against latest snapshot.</CardDescription>
+                <CardTitle className="text-xl font-black tracking-tight text-[#f5f5f0]">Vault Settings</CardTitle>
+                <CardDescription className="text-[#a8b3af]">Update identity, visibility, and access PIN.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <pre className="max-h-[360px] overflow-auto rounded-xl bg-[#02120e] p-3 text-xs text-[#c8d2ce]">
-                  {localDiff || "No diff calculated yet. Click Local Diff."}
-                </pre>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">Name</label>
+                  <Input 
+                    className="h-11 rounded-xl border-[#D4A574]/20 bg-[#1B4D3E]/10"
+                    value={settingsName} 
+                    onChange={(event) => setSettingsName(event.target.value)} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">Description</label>
+                  <Textarea
+                    className="min-h-[100px] rounded-xl border-[#D4A574]/20 bg-[#1B4D3E]/10"
+                    value={settingsDescription}
+                    onChange={(event) => setSettingsDescription(event.target.value)}
+                    placeholder="Describe this vault..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">Visibility</label>
+                  <select
+                    className="themed-select h-11 w-full rounded-xl border border-[#D4A574]/20 bg-[#1B4D3E]/10 px-4 text-xs font-black uppercase tracking-widest text-[#f5f5f0]"
+                    value={settingsVisibility}
+                    onChange={(event) =>
+                      setSettingsVisibility(event.target.value as "private" | "public")
+                    }
+                  >
+                    <option value="private">Private (Vaulted)</option>
+                    <option value="public">Public (Shared)</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">Access PIN</label>
+                  <Input
+                    className="h-11 rounded-xl border-[#D4A574]/20 bg-[#1B4D3E]/10"
+                    placeholder="New 6-digit PIN (optional)"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={settingsRepoPin}
+                    onChange={(event) =>
+                      setSettingsRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                  />
+                  <p className="text-[10px] text-[#8d9a95]">{settingsRepoPin.length}/6 digits</p>
+                </div>
+                <Button 
+                  className="w-full bg-[#D4A574] text-xs font-black uppercase tracking-widest text-[#02120e] hover:bg-[#D4A574]/90"
+                  onClick={() => settingsMutation.mutate()} 
+                  disabled={settingsMutation.isPending}
+                >
+                  Save Changes
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
+              <CardHeader>
+                <CardTitle className="text-xl font-black tracking-tight text-[#f5f5f0]">Collaborators</CardTitle>
+                <CardDescription className="text-[#a8b3af]">Invite team members and manage access roles.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+                  <Input
+                    className="h-11 rounded-xl border-[#D4A574]/20 bg-[#1B4D3E]/10 text-sm"
+                    placeholder="teammate@company.com"
+                    value={inviteEmail}
+                    onChange={(event) => setInviteEmail(event.target.value)}
+                  />
+                  <select
+                    className="themed-select h-11 rounded-xl border border-[#D4A574]/20 bg-[#1B4D3E]/10 px-4 text-xs font-black uppercase tracking-widest text-[#f5f5f0]"
+                    value={inviteRole}
+                    onChange={(event) =>
+                      setInviteRole(event.target.value as "VIEWER" | "CONTRIB" | "EDITOR")
+                    }
+                  >
+                    <option value="VIEWER">Viewer</option>
+                    <option value="CONTRIB">Contrib</option>
+                    <option value="EDITOR">Editor</option>
+                  </select>
+                  <Button 
+                    className="h-11 bg-[#D4A574] text-[10px] font-black uppercase tracking-widest text-[#02120e] hover:bg-[#D4A574]/90"
+                    onClick={() => inviteMutation.mutate()} 
+                    disabled={inviteMutation.isPending}
+                  >
+                    <UserPlus2Icon className="mr-2 h-4 w-4" />
+                    Invite
+                  </Button>
+                </div>
+
+                <div className="space-y-3">
+                  {repo?.shares.length ? (
+                    repo.shares.map((share) => (
+                      <div
+                        key={share.id}
+                        className="group flex items-center justify-between gap-4 rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/10 p-4 transition-all hover:border-[#D4A574]/30"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D4A574]/10 text-[#D4A574]">
+                            <UserPlus2Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-[#f5f5f0]">
+                              {share.user?.name || share.user?.email || share.inviteEmail}
+                            </p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">
+                              {share.role} • {share.acceptedAt ? "Active" : "Pending"}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 rounded-lg text-[10px] font-black uppercase tracking-widest text-red-400 hover:bg-red-400/10 hover:text-red-400"
+                          onClick={() => removeShareMutation.mutate(share.id)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#D4A574]/20 py-8 text-center">
+                      <p className="text-xs font-bold text-[#8d9a95]">No collaborators yet</p>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
-        </>
-      ) : null}
+        ) : null}
 
-      {activeTab === "settings" ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card>
+        {activeTab === "audit" ? (
+          <Card className="glass border-[#D4A574]/15 bg-[#02120e]/40">
             <CardHeader>
-              <CardTitle>Repository Settings</CardTitle>
-              <CardDescription>Update name, description, visibility, and PIN.</CardDescription>
+              <CardTitle className="text-xl font-black tracking-tight text-[#f5f5f0]">Audit Log</CardTitle>
+              <CardDescription className="text-[#a8b3af]">Complete activity trail for this vault.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Input value={settingsName} onChange={(event) => setSettingsName(event.target.value)} />
-              <Textarea
-                value={settingsDescription}
-                onChange={(event) => setSettingsDescription(event.target.value)}
-                placeholder="Description"
-              />
-              <select
-                className="themed-select w-full rounded-xl px-3 py-2 text-sm"
-                value={settingsVisibility}
-                onChange={(event) =>
-                  setSettingsVisibility(event.target.value as "private" | "public")
-                }
-              >
-                <option value="private">Private</option>
-                <option value="public">Public</option>
-              </select>
-              <div className="space-y-1">
-                <Input
-                  placeholder="New 6-digit repository PIN (optional)"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={settingsRepoPin}
-                  onChange={(event) =>
-                    setSettingsRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
-                />
-                <p className="text-xs text-[#8d9a95]">{settingsRepoPin.length}/6 digits</p>
-              </div>
-              <Button onClick={() => settingsMutation.mutate()} disabled={settingsMutation.isPending}>
-                Save Settings
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Collaborators</CardTitle>
-              <CardDescription>Invite by email and manage access roles.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid gap-2 md:grid-cols-[1fr_140px_auto]">
-                <Input
-                  placeholder="teammate@company.com"
-                  value={inviteEmail}
-                  onChange={(event) => setInviteEmail(event.target.value)}
-                />
-                <select
-                  className="themed-select rounded-xl px-3 py-2 text-sm"
-                  value={inviteRole}
-                  onChange={(event) =>
-                    setInviteRole(event.target.value as "VIEWER" | "CONTRIB" | "EDITOR")
-                  }
-                >
-                  <option value="VIEWER">Viewer</option>
-                  <option value="CONTRIB">Contributor</option>
-                  <option value="EDITOR">Editor</option>
-                </select>
-                <Button onClick={() => inviteMutation.mutate()} disabled={inviteMutation.isPending}>
-                  <UserPlus2Icon className="mr-2 h-4 w-4" />
-                  Invite
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                {repo?.shares.length ? (
-                  repo.shares.map((share) => (
+            <CardContent className="space-y-4">
+              {repo?.auditLogs.length ? (
+                <div className="grid gap-3">
+                  {repo.auditLogs.map((entry) => (
                     <div
-                      key={share.id}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-3 py-2"
+                      key={entry.id}
+                      className="rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/10 p-4 transition-all hover:border-[#D4A574]/20"
                     >
-                      <div>
-                        <p className="text-sm text-[#f5f5f0]">
-                          {share.user?.name || share.user?.email || share.inviteEmail || "Invite"}
-                        </p>
-                        <p className="text-xs text-[#8d9a95]">
-                          {share.role} -{" "}
-                          {share.acceptedAt ? "accepted" : `pending since ${new Date(share.createdAt).toLocaleDateString()}`}
-                        </p>
+                      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-[#f5f5f0]">{entry.action}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/60">
+                            {entry.user.name ?? entry.user.email} • {new Date(entry.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                        {entry.metadata ? (
+                          <div className="rounded-xl bg-[#02120e]/60 p-3">
+                            <pre className="max-h-24 overflow-auto font-mono text-[10px] text-[#8d9a95]">
+                              {JSON.stringify(entry.metadata, null, 2)}
+                            </pre>
+                          </div>
+                        ) : null}
                       </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => removeShareMutation.mutate(share.id)}
-                      >
-                        Remove
-                      </Button>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-[#a8b3af]">No collaborators yet.</p>
-                )}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#D4A574]/20 py-12 text-center">
+                  <p className="text-sm font-bold text-[#8d9a95]">No audit events yet</p>
+                </div>
+              )}
             </CardContent>
           </Card>
-        </div>
-      ) : null}
-
-      {activeTab === "audit" ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Audit Log</CardTitle>
-            <CardDescription>Who changed what, and when.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {repo?.auditLogs.length ? (
-              repo.auditLogs.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 p-3"
-                >
-                  <p className="text-sm text-[#f5f5f0]">{entry.action}</p>
-                  <p className="text-xs text-[#a8b3af]">
-                    {entry.user.name ?? entry.user.email} - {new Date(entry.timestamp).toLocaleString()}
-                  </p>
-                  {entry.metadata ? (
-                    <pre className="mt-2 max-h-24 overflow-auto rounded bg-[#02120e]/70 p-2 text-[11px] text-[#8d9a95]">
-                      {JSON.stringify(entry.metadata, null, 2)}
-                    </pre>
-                  ) : null}
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-[#a8b3af]">No audit events yet.</p>
-            )}
-          </CardContent>
-        </Card>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -25,10 +25,6 @@ export const metadata: Metadata = {
   },
   description:
     "Backup, version, share, and deploy encrypted env files with a CLI and collaborative dashboard.",
-  manifest: "/manifest.webmanifest",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({

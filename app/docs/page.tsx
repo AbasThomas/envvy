@@ -21,7 +21,7 @@ import {
   TerminalIcon,
   UserIcon,
   ZapIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -158,12 +158,33 @@ export default function DocsPage() {
   }, []);
 
   return (
-    <div className="relative mx-auto flex w-full max-w-7xl gap-12 px-6 pb-32 pt-6 lg:px-10">
-      {/* Sidebar */}
-      <aside className="sticky top-10 hidden h-[calc(100vh-5rem)] w-64 shrink-0 overflow-y-auto pr-4 lg:block no-scrollbar">
+    <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 pb-32 pt-6 sm:px-6 lg:flex-row lg:px-10 lg:pt-10">
+      {/* Mobile Table of Contents */}
+      <div className="rounded-2xl border border-[#D4A574]/15 bg-[#1B4D3E]/5 p-4 lg:hidden">
+        <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#D4A574]/60">
+          Table of Contents
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {sections.map((s) => (
+            <a
+              key={s.id}
+              href={`#${s.id}`}
+              className={cn(
+                "rounded-lg border border-[#D4A574]/10 bg-[#02120e]/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#8d9a95] transition-all active:scale-95",
+                activeId === s.id && "border-[#D4A574]/30 bg-[#1B4D3E]/40 text-[#f5f5f0]"
+              )}
+            >
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Sidebar - Desktop only */}
+      <aside className="sticky top-28 hidden h-[calc(100vh-10rem)] w-64 shrink-0 overflow-y-auto pr-4 lg:block no-scrollbar">
         <div className="space-y-1">
-          <p className="mb-4 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/60">
-            Documentation
+          <p className="mb-4 px-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#D4A574]/60">
+            Developer Docs
           </p>
           {sections.map((s) => {
             const Icon = s.icon;
@@ -173,9 +194,9 @@ export default function DocsPage() {
                 key={s.id}
                 href={`#${s.id}`}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-bold transition-all duration-200",
+                  "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[11px] font-black uppercase tracking-widest transition-all duration-200",
                   active
-                    ? "bg-[#1B4D3E]/40 text-[#f5f5f0] shadow-[0_4px_12px_rgba(27,77,62,0.15)] ring-1 ring-[#D4A574]/20"
+                    ? "bg-[#1B4D3E]/40 text-[#f5f5f0] shadow-[0_4px_15px_rgba(27,77,62,0.2)] ring-1 ring-[#D4A574]/20"
                     : "text-[#8d9a95] hover:bg-[#1B4D3E]/15 hover:text-[#f5f5f0]",
                 )}
               >
@@ -188,18 +209,18 @@ export default function DocsPage() {
       </aside>
 
       {/* Main content */}
-      <main className="min-w-0 flex-1 space-y-20 lg:max-w-4xl">
+      <main className="min-w-0 flex-1 space-y-16 sm:space-y-24 lg:max-w-4xl">
         {/* Hero */}
-        <div className="space-y-4 border-b border-[#D4A574]/15 pb-12">
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] text-[#D4A574]">
-            <BookOpenIcon className="h-4 w-4" />
-            <span>Developer Guide</span>
+        <div className="space-y-4 border-b border-[#D4A574]/15 pb-10 sm:space-y-6 sm:pb-16">
+          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A574]">
+            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-[#D4A574] to-transparent" />
+            <span>Documentation</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-[#f5f5f0] lg:text-6xl">
-            envii <span className="text-[#D4A574]">Docs</span>
+          <h1 className="text-4xl font-black tracking-tighter text-[#f5f5f0] sm:text-5xl lg:text-7xl">
+            Envii <span className="text-[#D4A574]">Docs</span>
           </h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-[#a8b3af]">
-            Master the art of secure environment management. Version, share, and protect your project secrets with enterprise-grade encryption.
+          <p className="max-w-2xl text-lg leading-relaxed text-[#a8b3af] font-medium sm:text-xl">
+            The complete guide to secure environment management.
           </p>
         </div>
 

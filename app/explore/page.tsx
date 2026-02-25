@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { SearchIcon, TrendingUpIcon } from "lucide-react";
+import { SearchIcon, TrendingUpIcon } from "@/components/ui/icons";
 import { useMemo, useState } from "react";
 
 import { RepoList } from "@/components/repo-list";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { fetcher } from "@/lib/fetcher";
+import { cn } from "@/lib/utils";
 
 type ExploreResponse = {
   repos: Array<{
@@ -18,6 +19,7 @@ type ExploreResponse = {
     description: string | null;
     tags: string[];
     isPublic: boolean;
+    updatedAt: string;
     _count: { stars: number; envs: number; forks: number };
   }>;
 };
@@ -48,23 +50,25 @@ export default function ExplorePage() {
   }, [query, activeTag, searchQuery.data?.repos, trendingQuery.data?.repos]);
 
   return (
-    <div className="app-page">
-      <Card className="grid-bg border-[#D4A574]/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-2xl">
-            <TrendingUpIcon className="h-5 w-5 text-[#D4A574]" />
-            Explore public repositories
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-[#a8b3af]">
-            Discover templates and workflows shared by the community.
-          </p>
+    <div className="app-page space-y-10 pb-20">
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A574]">
+          <div className="h-1 w-8 rounded-full bg-gradient-to-r from-[#D4A574] to-transparent" />
+          <span>Community</span>
+        </div>
+        <h1 className="text-3xl font-black tracking-tight text-[#f5f5f0] sm:text-4xl">Explore Public Vaults</h1>
+        <p className="max-w-2xl text-sm leading-relaxed text-[#a8b3af] sm:text-base">
+          Discover templates and workflows shared by the community. Securely fork and star repositories to your workspace.
+        </p>
+      </div>
+
+      <Card className="grid-bg relative overflow-hidden border-[#D4A574]/20 bg-[#02120e]/60">
+        <CardContent className="relative z-10 space-y-6 pt-8">
           <div className="relative">
-            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8d9a95]" />
+            <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#D4A574]/60" />
             <Input
               placeholder="Search public repositories, tags, and templates..."
-              className="pl-10"
+              className="h-14 rounded-2xl border-[#D4A574]/15 bg-[#02120e]/80 pl-12 text-base shadow-2xl focus:ring-[#D4A574]/30"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -74,8 +78,18 @@ export default function ExplorePage() {
               <button
                 key={category}
                 onClick={() => setActiveTag((current) => (current === category ? null : category))}
+                className="transition-transform active:scale-95"
               >
-                <Badge variant={activeTag === category ? "default" : "muted"}>#{category}</Badge>
+                <Badge 
+                  className={cn(
+                    "px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all",
+                    activeTag === category 
+                      ? "bg-[#D4A574] text-[#02120e] shadow-lg shadow-[#D4A574]/20" 
+                      : "bg-[#1B4D3E]/20 text-[#a8b3af] border border-[#D4A574]/10 hover:border-[#D4A574]/30 hover:text-[#f5f5f0]"
+                  )}
+                >
+                  #{category}
+                </Badge>
               </button>
             ))}
           </div>

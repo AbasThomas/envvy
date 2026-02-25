@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowRightIcon, CopyIcon, RefreshCwIcon, ShieldCheckIcon, TerminalSquareIcon } from "lucide-react";
+import { ArrowRightIcon, CopyIcon, RefreshCwIcon, ShieldCheckIcon, TerminalSquareIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ActivityIcon, CalendarIcon, GitForkIcon, LockIcon, StarIcon, GlobeIcon } from "lucide-react";
+import { ActivityIcon, CalendarIcon, GitForkIcon, LockIcon, StarIcon, GlobeIcon } from "@/components/ui/icons";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ type RepoItem = {
 
 export function RepoList({ repos }: { repos: RepoItem[] }) {
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
       {repos.map((repo, index) => (
         <motion.div
           key={repo.id}

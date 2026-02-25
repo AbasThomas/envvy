@@ -3,17 +3,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIcon,
+  ArrowRightIcon,
   FilterIcon,
   FolderGit2Icon,
   GlobeIcon,
   HistoryIcon,
   LockIcon,
   PlusIcon,
+  RefreshCwIcon,
   SearchIcon,
+  ShieldCheckIcon,
   StarIcon,
   Trash2Icon,
   ZapIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -104,27 +107,29 @@ export default function ReposPage() {
   const canCreate = repoName.trim().length >= 2 && isValidRepoPin(repoPin);
 
   return (
-    <div className="app-page space-y-10 pb-10">
-      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-[#D4A574]">
-            <FolderGit2Icon className="h-5 w-5" />
-            <span className="text-sm font-bold uppercase tracking-widest">Repositories</span>
+    <div className="app-page space-y-10 pb-20">
+      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between sm:gap-10">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#D4A574]">
+            <div className="h-1 w-8 rounded-full bg-gradient-to-r from-[#D4A574] to-transparent" />
+            <span>Workspace</span>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-[#f5f5f0]">Your Workspace</h1>
-          <p className="text-[#a8b3af]">Manage and secure your project environment variables.</p>
+          <h1 className="text-3xl font-black tracking-tight text-[#f5f5f0] sm:text-4xl">Your Repositories</h1>
+          <p className="max-w-2xl text-sm leading-relaxed text-[#a8b3af] sm:text-base">
+            Manage and secure your project environment variables in isolated vaults.
+          </p>
         </div>
 
-        <Card className="border-[#D4A574]/20 bg-[#1B4D3E]/12 px-4 py-3 md:w-auto">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase text-[#D4A574]/70">Total Repos</span>
-              <span className="text-xl font-bold">{reposQuery.data?.repos.length ?? 0}</span>
+        <Card className="glass overflow-hidden border-[#D4A574]/20 bg-[#1B4D3E]/10 px-6 py-4 shadow-xl">
+          <div className="flex items-center justify-around gap-6 md:justify-start">
+            <div className="flex flex-col items-center md:items-start">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/70">Vaults</span>
+              <span className="text-2xl font-black text-[#f5f5f0]">{reposQuery.data?.repos.length ?? 0}</span>
             </div>
-            <div className="h-8 w-px bg-[#D4A574]/15" />
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase text-emerald-400/70">Total Snaps</span>
-              <span className="text-xl font-bold">
+            <div className="h-10 w-px bg-[#D4A574]/15" />
+            <div className="flex flex-col items-center md:items-start">
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400/70">Snapshots</span>
+              <span className="text-2xl font-black text-[#f5f5f0]">
                 {reposQuery.data?.repos.reduce((acc, r) => acc + r._count.envs, 0) ?? 0}
               </span>
             </div>
@@ -132,73 +137,74 @@ export default function ReposPage() {
         </Card>
       </div>
 
-      <Card className="glass overflow-hidden border-[#D4A574]/25">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#D4A574]/5 blur-3xl" />
-        <CardHeader className="relative z-10 border-b border-[#D4A574]/10 bg-[#02120e]/40">
-          <div className="flex items-center gap-2">
-            <PlusIcon className="h-4 w-4 text-[#D4A574]" />
-            <CardTitle className="text-sm font-bold uppercase tracking-wider">Quick Create Repository</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="relative z-10 grid gap-4 p-6 md:grid-cols-[1.5fr_1fr_120px_140px_auto]">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold uppercase text-[#a8b3af]">Repo Name</label>
-            <Input
-              placeholder="e.g. backend-api"
-              className="bg-[#02120e]/60 border-[#D4A574]/15 focus:ring-[#D4A574]/30"
-              value={repoName}
-              onChange={(event) => setRepoName(event.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold uppercase text-[#a8b3af]">Description</label>
-            <Input
-              placeholder="Project environment..."
-              className="bg-[#02120e]/60 border-[#D4A574]/15"
-              value={repoDescription}
-              onChange={(event) => setRepoDescription(event.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold uppercase text-[#a8b3af]">Visibility</label>
-            <select
-              className="themed-select w-full rounded-xl border-[#D4A574]/15 bg-[#02120e]/60 px-3 py-2 text-sm"
-              value={repoVisibility}
-              onChange={(event) => setRepoVisibility(event.target.value as "private" | "public")}
-            >
-              <option value="private">Private</option>
-              <option value="public">Public</option>
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-bold uppercase text-[#a8b3af]">6-Digit PIN</label>
+      <Card className="glass relative overflow-hidden border-[#D4A574]/20 bg-[#02120e]/60 p-5 sm:p-8">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Input
-                placeholder="000000"
-                className="bg-[#02120e]/60 border-[#D4A574]/15"
-                value={repoPin}
-                inputMode="numeric"
-                maxLength={6}
-                onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-              />
-              <p className="text-xs text-[#8d9a95]">{repoPin.length}/6 digits</p>
+              <h3 className="text-lg font-black tracking-tight text-[#f5f5f0]">Quick Create</h3>
+              <p className="text-xs font-medium text-[#a8b3af]">Launch a new secure vault in seconds.</p>
+            </div>
+            <div className="hidden items-center gap-2 rounded-full border border-[#D4A574]/20 bg-[#02120e]/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#D4A574] xs:flex">
+              <PlusIcon className="h-3 w-3" />
+              SECURE
             </div>
           </div>
-          <div className="flex items-end">
+
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-[1fr_180px_180px_auto] items-end">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Repository Name</label>
+              <Input
+                placeholder="my-awesome-app"
+                className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 focus:ring-[#D4A574]/30"
+                value={repoName}
+                onChange={(e) => setRepoName(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 md:contents">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Visibility</label>
+                <select
+                  className="themed-select h-11 w-full rounded-xl border border-[#D4A574]/15 bg-[#02120e]/80 px-3 text-sm text-[#f5f5f0] outline-none focus:ring-1 focus:ring-[#D4A574]/30"
+                  value={repoVisibility}
+                  onChange={(event) => setRepoVisibility(event.target.value as "private" | "public")}
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Access PIN</label>
+                <Input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="6-digit PIN"
+                  className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 text-center font-mono tracking-widest focus:ring-[#D4A574]/30"
+                  value={repoPin}
+                  onChange={(e) => setRepoPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                />
+              </div>
+            </div>
+
             <Button
-              className="w-full bg-gradient-to-r from-[#D4A574] to-[#C85A3A] font-bold text-[#02120e]"
+              className="group h-11 w-full px-8 bg-gradient-to-r from-[#D4A574] to-[#C85A3A] font-black uppercase tracking-widest text-[#02120e] shadow-lg shadow-[#D4A574]/10 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 md:w-auto"
               disabled={!canCreate || createRepoMutation.isPending}
               onClick={() => createRepoMutation.mutate()}
             >
               {createRepoMutation.isPending ? (
-                <ZapIcon className="mr-2 h-4 w-4 animate-spin" />
+                <ZapIcon className="h-4 w-4 animate-spin" />
               ) : (
-                <PlusIcon className="mr-2 h-4 w-4" />
+                <>
+                  <span className="hidden md:inline">Create Vault</span>
+                  <span className="md:hidden">Create Repository</span>
+                  <PlusIcon className="ml-2 h-4 w-4" />
+                </>
               )}
-              Create
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

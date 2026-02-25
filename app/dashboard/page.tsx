@@ -4,16 +4,20 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   ActivityIcon,
+  ArrowRightIcon,
   CompassIcon,
   FolderGit2Icon,
   HistoryIcon,
+  KeyRoundIcon,
   LayoutDashboardIcon,
   PlusIcon,
   RefreshCcwIcon,
+  RefreshCwIcon,
+  ShieldCheckIcon,
   StarIcon,
   UsersIcon,
   ZapIcon,
-} from "lucide-react";
+} from "@/components/ui/icons";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -119,104 +123,101 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="app-page space-y-10 pb-10">
+    <div className="app-page space-y-6 pb-10 sm:space-y-10">
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative grid gap-6 md:grid-cols-[1.5fr_1fr]"
+        className="relative grid gap-6 lg:grid-cols-[1fr_400px]"
       >
-        <Card className="glass relative overflow-hidden border-[#D4A574]/25">
-          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#D4A574]/10 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#1B4D3E]/20 blur-3xl" />
-          
-          <CardHeader className="relative z-10">
-            <div className="flex items-center gap-2 text-sm font-medium text-[#D4A574]">
-              <LayoutDashboardIcon className="h-4 w-4" />
-              <span>Workspace Overview</span>
+        <Card className="glass relative flex flex-col justify-center overflow-hidden border-[#D4A574]/20 bg-gradient-to-br from-[#1B4D3E]/20 to-transparent p-6 sm:p-10">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#D4A574]/5 blur-3xl" />
+          <div className="relative z-10 space-y-4 sm:space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black tracking-tight text-[#f5f5f0] sm:text-4xl">
+                Secure your <span className="text-[#D4A574]">secrets</span>.
+              </h2>
+              <p className="max-w-md text-sm leading-relaxed text-[#a8b3af] sm:text-base">
+                Create a new repository to start versioning your environment variables with AES-256
+                encryption.
+              </p>
             </div>
-            <CardTitle className="mt-2 text-3xl font-bold tracking-tight">
-              {`Welcome back, ${displayName}!`}
-            </CardTitle>
-            <CardDescription className="max-w-md text-base text-[#a8b3af]">
-              Manage your private repositories, encrypted backups, and approval-safe environment updates from one secure hub.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="relative z-10 flex flex-wrap items-center gap-3">
-            <Badge className="bg-[#1B4D3E]/30 text-[#f5f5f0] border-[#D4A574]/15">
-              Private by default
-            </Badge>
-            <Badge variant="muted" className="bg-[#02120e]/40">
-              CLI synced
-            </Badge>
-            <Badge variant="success" className="bg-[#1B4D3E]/40 border-[#1B4D3E]/50">
-              PIN guard active
-            </Badge>
-            <Link href="/explore" className="ml-auto">
-              <Button size="sm" variant="ghost" className="text-[#D4A574] hover:bg-[#D4A574]/10">
-                <CompassIcon className="mr-2 h-4 w-4" />
-                Explore Community
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card className="relative overflow-hidden border-[#D4A574]/20 bg-[#1B4D3E]/12">
-          <CardHeader>
-            <div className="flex items-center gap-2 text-sm font-medium text-[#D4A574]">
-              <PlusIcon className="h-4 w-4" />
-              <span>Quick Create</span>
-            </div>
-            <CardTitle className="text-xl">New Repository</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid gap-2">
-              <Input
-                placeholder="repo-name"
-                className="bg-[#02120e]/60 border-[#D4A574]/15 focus:ring-[#D4A574]/30"
-                value={repoName}
-                onChange={(event) => setRepoName(event.target.value)}
-              />
-              <div className="flex gap-2">
-                <select
-                  className="themed-select flex-1 rounded-xl px-3 py-2 text-sm border-[#D4A574]/15 bg-[#02120e]/60"
-                  value={repoVisibility}
-                  onChange={(event) =>
-                    setRepoVisibility(event.target.value as "private" | "public")
-                  }
-                >
-                  <option value="private">Private</option>
-                  <option value="public">Public</option>
-                </select>
-                <div className="w-28 space-y-1">
-                  <Input
-                    placeholder="6-digit PIN"
-                    className="w-full bg-[#02120e]/60 border-[#D4A574]/15"
-                    value={repoPin}
-                    inputMode="numeric"
-                    maxLength={6}
-                    onChange={(event) => setRepoPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                  />
-                  <p className="text-[10px] text-[#8d9a95]">{repoPin.length}/6</p>
-                </div>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 rounded-full border border-[#D4A574]/20 bg-[#02120e]/40 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#D4A574] sm:px-3 sm:text-[10px]">
+                <ShieldCheckIcon className="h-3 w-3" />
+                Zero-Knowledge
+              </div>
+              <div className="flex items-center gap-2 rounded-full border border-[#D4A574]/20 bg-[#02120e]/40 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#D4A574] sm:px-3 sm:text-[10px]">
+                <KeyRoundIcon className="h-3 w-3" />
+                PIN Protected
               </div>
             </div>
-            <Button
-              className="w-full bg-gradient-to-r from-[#D4A574] to-[#C85A3A] text-[#02120e] font-bold hover:opacity-90 transition-opacity"
-              onClick={submitCreateRepo}
-              disabled={createRepoMutation.isPending || !repoName.trim() || !isValidRepoPin(repoPin)}
-            >
-              {createRepoMutation.isPending ? (
-                <RefreshCcwIcon className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <PlusIcon className="mr-2 h-4 w-4" />
-              )}
-              Create Repository
-            </Button>
-          </CardContent>
+          </div>
+        </Card>
+
+        <Card className="glass border-[#D4A574]/20 bg-[#02120e]/60 p-5 sm:p-8">
+          <div className="space-y-5 sm:space-y-6">
+            <div className="space-y-1">
+              <h3 className="text-lg font-black tracking-tight text-[#f5f5f0]">Quick Create</h3>
+              <p className="text-xs font-medium text-[#a8b3af]">Launch a new secure vault in seconds.</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Repository Name</label>
+                <Input
+                  placeholder="my-awesome-app"
+                  className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 focus:ring-[#D4A574]/30"
+                  value={repoName}
+                  onChange={(e) => setRepoName(e.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Visibility</label>
+                  <select
+                    className="themed-select h-11 w-full rounded-xl border border-[#D4A574]/15 bg-[#02120e]/80 px-3 text-sm text-[#f5f5f0] outline-none focus:ring-1 focus:ring-[#D4A574]/30"
+                    value={repoVisibility}
+                    onChange={(event) => setRepoVisibility(event.target.value as "private" | "public")}
+                  >
+                    <option value="private">Private</option>
+                    <option value="public">Public</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Access PIN</label>
+                  <Input
+                    type="password"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="6-digit PIN"
+                    className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 text-center font-mono tracking-widest focus:ring-[#D4A574]/30"
+                    value={repoPin}
+                    onChange={(e) => setRepoPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  />
+                </div>
+              </div>
+
+              <Button
+                className="group h-11 w-full bg-gradient-to-r from-[#D4A574] to-[#C85A3A] font-black uppercase tracking-widest text-[#02120e] shadow-lg shadow-[#D4A574]/10 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                onClick={submitCreateRepo}
+                disabled={createRepoMutation.isPending || !repoName.trim() || !isValidRepoPin(repoPin)}
+              >
+                {createRepoMutation.isPending ? (
+                  <RefreshCcwIcon className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Create Vault
+                    <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </Card>
       </motion.section>
 
-      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 sm:gap-6">
         {[
           { label: "Your Repos", value: repos.length, icon: FolderGit2Icon, color: "text-blue-400" },
           { label: "Total Snapshots", value: totalCommits, icon: ActivityIcon, color: "text-emerald-400" },

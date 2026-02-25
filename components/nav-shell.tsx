@@ -14,7 +14,9 @@ import {
   SettingsIcon,
   ShieldCheckIcon,
   UserIcon,
-} from "lucide-react";
+  MenuIcon,
+  XIcon,
+} from "@/components/ui/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
@@ -62,6 +64,7 @@ function isActivePath(pathname: string, href: string) {
 export function NavShell({ mode = "sidebar" }: NavShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -76,34 +79,48 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
 
   if (mode === "top") {
     return (
-      <header className="sticky top-3 z-40 lg:hidden">
-        <div className="rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/90 p-3 shadow-[0_12px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-          <div className="flex items-center justify-between gap-3">
-            <Link href="/" className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-xs font-bold text-[#02120e] shadow-lg">
-                EN
-              </span>
-              <div>
-                <p className="font-bold text-[#f5f5f0]">envii</p>
-                <p className="text-[10px] font-medium text-[#a8b3af]">Secure Envs</p>
-              </div>
-            </Link>
+      <header className="sticky top-2 z-40 lg:hidden sm:top-3">
+        <div className="rounded-xl border border-[#D4A574]/20 bg-[#02120e]/90 p-2 shadow-[0_12px_48px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:rounded-2xl sm:p-3">
+          <div className="flex items-center justify-between gap-2 px-1">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 text-[#D4A574] hover:bg-[#1B4D3E]/20 sm:hidden"
+                onClick={() => setIsOpen(true)}
+              >
+                <MenuIcon className="h-5 w-5" />
+              </Button>
+              <Link href="/" className="text-xl font-black tracking-tight text-[#f5f5f0] sm:text-2xl">
+                Envii
+              </Link>
+            </div>
 
-            <div className="flex items-center gap-2">
-              <Link href="/signup" className="hidden sm:block">
-                <Button size="sm" className="bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-[#02120e] font-bold text-[10px] uppercase tracking-widest px-4">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Link href="/signup" className="hidden xs:block sm:block">
+                <Button size="sm" className="bg-gradient-to-br from-[#c8854a] to-[#a03020] text-white border border-white/20 shadow-[0_8px_24px_rgba(200,90,58,0.35)] font-bold text-[9px] uppercase tracking-widest px-3 sm:text-[10px] sm:px-4 transition-all hover:scale-105 active:scale-95">
                   Get Started
                 </Button>
               </Link>
-              <button className="relative rounded-full border border-[#D4A574]/15 p-2 text-[#a8b3af] transition hover:bg-[#1B4D3E]/30 hover:text-[#f5f5f0]">
-                <BellIcon className="h-4 w-4" />
-                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#C85A3A]" />
+              <button className="relative rounded-full border border-[#D4A574]/15 p-1.5 text-[#a8b3af] transition hover:bg-[#1B4D3E]/30 hover:text-[#f5f5f0] sm:p-2">
+                <BellIcon className="h-3.5 w-3.5 sm:h-4 w-4" />
+                <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#C85A3A] sm:right-2 sm:top-2" />
               </button>
               <ThemeToggle />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => void handleLogout()}
+                disabled={isLoggingOut}
+                className="h-8 w-8 border-[#D4A574]/25 bg-[#02120e]/40 text-[#f5f5f0] hover:bg-[#1B4D3E]/40 hover:text-[#f5f5f0] sm:h-9 sm:w-9"
+              >
+                <LogOutIcon className="h-3.5 w-3.5 sm:h-4 w-4" />
+              </Button>
             </div>
           </div>
 
-          <nav className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+          <nav className="no-scrollbar mt-3 hidden gap-1.5 overflow-x-auto pb-1 sm:flex sm:mt-4 sm:gap-2">
             {links.map((link) => {
               const active = isActivePath(pathname, link.href);
               const Icon = link.icon;
@@ -112,30 +129,97 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all",
+                    "inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all sm:rounded-xl sm:px-3.5 sm:py-2 sm:text-xs",
                     active
                       ? "border-[#D4A574]/40 bg-[#1B4D3E]/50 text-[#f5f5f0] shadow-sm"
                       : "border-transparent bg-[#02120e]/40 text-[#a8b3af] hover:border-[#D4A574]/20 hover:text-[#f5f5f0]",
                   )}
                 >
-                  <Icon className={cn("h-4 w-4", active ? "text-[#D4A574]" : "text-[#8d9a95]")} />
+                  <Icon className={cn("h-3.5 w-3.5 sm:h-4 w-4", active ? "text-[#D4A574]" : "text-[#8d9a95]")} />
                   {link.label}
                 </Link>
               );
             })}
           </nav>
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => void handleLogout()}
-            disabled={isLoggingOut}
-            className="mt-3 w-full justify-center border-[#D4A574]/25 bg-[#02120e]/40 text-xs font-semibold text-[#f5f5f0] hover:bg-[#1B4D3E]/40 hover:text-[#f5f5f0]"
-          >
-            <LogOutIcon className="mr-2 h-4 w-4" />
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </Button>
         </div>
+
+        {/* Mobile Drawer */}
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsOpen(false)}
+                className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm sm:hidden"
+              />
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed inset-y-0 left-0 z-[60] w-[280px] border-r border-[#D4A574]/15 bg-[#02120e] p-6 shadow-2xl sm:hidden"
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-8">
+                    <Link href="/" className="text-2xl font-black tracking-tighter text-[#f5f5f0]">
+                      Envii
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-[#8d9a95] hover:text-[#f5f5f0]"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <XIcon className="h-6 w-6" />
+                    </Button>
+                  </div>
+
+                  <nav className="flex-1 space-y-2">
+                    {links.map((link) => {
+                      const active = isActivePath(pathname, link.href);
+                      const Icon = link.icon;
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setIsOpen(false)}
+                          className={cn(
+                            "flex items-center gap-4 rounded-xl border px-4 py-3.5 text-sm font-bold tracking-tight transition-all",
+                            active
+                              ? "border-[#D4A574]/30 bg-[#1B4D3E]/40 text-[#f5f5f0] shadow-lg"
+                              : "border-transparent text-[#a8b3af] hover:bg-[#1B4D3E]/15 hover:text-[#f5f5f0]",
+                          )}
+                        >
+                          <Icon className={cn("h-5 w-5", active ? "text-[#D4A574]" : "text-[#8d9a95]")} />
+                          {link.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+
+                  <div className="mt-auto space-y-4 pt-6 border-t border-[#D4A574]/10">
+                    <div className="flex items-center gap-3 rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/5 p-4">
+                      <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/80">System Live</span>
+                    </div>
+                    
+                    <Button
+                      type="button"
+                      onClick={() => void handleLogout()}
+                      disabled={isLoggingOut}
+                      className="w-full justify-start gap-3 border border-[#D4A574]/15 bg-[#02120e]/40 px-4 py-3.5 text-sm font-black uppercase tracking-widest text-[#C85A3A] hover:bg-[#C85A3A]/10"
+                    >
+                      <LogOutIcon className="h-5 w-5" />
+                      {isLoggingOut ? "..." : "Logout"}
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </header>
     );
   }
@@ -159,44 +243,44 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
       </button>
 
       <div className="flex min-h-0 flex-1 flex-col">
-        <Link href="/" className={cn(
-          "group relative flex items-center gap-3 rounded-2xl border border-[#D4A574]/10 bg-gradient-to-br from-[#1B4D3E]/20 to-transparent transition-all duration-300 hover:border-[#D4A574]/30",
-          collapsed ? "px-2 py-4 justify-center" : "px-4 py-4"
-        )}>
-          <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] text-sm font-bold text-[#02120e] shadow-[0_4px_20px_rgba(212,165,116,0.3)] transition-transform group-hover:scale-105">
-            EN
-            <span className="absolute -inset-1 rounded-xl bg-gradient-to-br from-[#D4A574] to-[#C85A3A] opacity-20 blur-sm" />
-          </span>
-          {!collapsed && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="flex flex-col"
-            >
-              <p className="text-xl font-black tracking-tighter text-[#f5f5f0]">envii</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4A574]/60">Secure Envs</p>
-            </motion.div>
-          )}
-        </Link>
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/"
+            className={cn(
+              "flex items-center transition-all duration-500 ease-in-out",
+              collapsed ? "justify-center" : "px-2 gap-3",
+            )}
+          >
+            {collapsed ? (
+              <span className="text-2xl font-black tracking-tighter text-[#D4A574]">
+                E
+              </span>
+            ) : (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-2xl font-black tracking-tighter text-[#f5f5f0]"
+              >
+                Envii
+              </motion.span>
+            )}
+          </Link>
 
-        <div className={cn(
-          "mt-6 flex items-center rounded-2xl border border-[#D4A574]/5 bg-[#02120e]/60 px-3 py-2.5",
-          collapsed ? "justify-center" : "justify-between"
-        )}>
-          {!collapsed && (
-            <div className="flex items-center gap-2.5">
-              <div className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+          <div className={cn(
+            "flex items-center gap-2 rounded-2xl border border-[#D4A574]/10 bg-[#1B4D3E]/5 p-2 transition-all",
+            collapsed ? "flex-col" : "justify-between"
+          )}>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#a8b3af]">System Live</span>
+              {!collapsed && <span className="text-[10px] font-black uppercase tracking-widest text-[#D4A574]/80">System Live</span>}
             </div>
-          )}
-          <button className="group relative rounded-full border border-[#D4A574]/10 p-2 text-[#a8b3af] transition-all hover:bg-[#1B4D3E]/40 hover:text-[#f5f5f0]">
-            <BellIcon className="h-4 w-4 transition-transform group-hover:rotate-12" />
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#C85A3A] ring-2 ring-[#02120e]" />
-          </button>
+            <button className="relative rounded-lg p-1.5 text-[#8d9a95] transition hover:bg-[#1B4D3E]/20 hover:text-[#f5f5f0]">
+              <BellIcon className="h-4 w-4" />
+              <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-[#C85A3A]" />
+            </button>
+          </div>
         </div>
 
         <nav className="mt-6 space-y-2">
@@ -246,34 +330,13 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
         </nav>
 
         <div className="mt-auto flex w-full flex-col space-y-4 pt-4">
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            disabled={isLoggingOut}
-            title={collapsed ? "Logout" : undefined}
-            className={cn(
-              "group flex w-full items-center rounded-xl border border-[#D4A574]/20 bg-[#02120e]/40 text-[#a8b3af] transition-all hover:border-[#C85A3A]/45 hover:bg-[#1B4D3E]/25 hover:text-[#f5f5f0] disabled:cursor-not-allowed disabled:opacity-60",
-              collapsed ? "justify-center p-3" : "gap-3 px-4 py-3",
-            )}
-          >
-            <LogOutIcon
-              className={cn(
-                "h-4 w-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
-                collapsed ? "text-[#D4A574]" : "text-[#C85A3A]",
-              )}
-            />
-            {!collapsed && (
-              <span className="text-xs font-bold tracking-wide">{isLoggingOut ? "Logging out..." : "Logout"}</span>
-            )}
-          </button>
-
           <AnimatePresence mode="wait">
             {!collapsed && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="group relative w-full overflow-hidden rounded-[1.5rem] border border-[#D4A574]/20 bg-gradient-to-br from-[#1B4D3E]/30 via-[#02120e]/60 to-transparent p-4 transition-all hover:border-[#D4A574]/40"
+                className="group relative w-full overflow-hidden rounded-2xl border border-[#D4A574]/20 bg-gradient-to-br from-[#1B4D3E]/30 via-[#02120e]/60 to-transparent p-4 transition-all hover:border-[#D4A574]/40"
               >
                 <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[#D4A574]/10 blur-2xl transition-all group-hover:bg-[#D4A574]/20" />
                 <div className="relative z-10">
@@ -286,7 +349,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                     </p>
                   </div>
                   <p className="mt-3 text-[11px] font-medium leading-relaxed text-[#f5f5f0]">
-                    Your environment variables are <span className="text-[#D4A574]">AES-256</span> encrypted and PIN protected.
+                    Your environment variables are <span className="text-[#D4A574]">AES-256</span> encrypted.
                   </p>
                   <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#D4A574]/10 pt-3">
                     <div className="flex items-center gap-2">
@@ -299,23 +362,45 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
               </motion.div>
             )}
           </AnimatePresence>
-          
+
           <div className={cn(
-            "flex w-full items-center gap-3 transition-all",
-            collapsed ? "flex-col justify-center py-2 px-0" : "justify-between px-2"
+            "flex w-full items-center gap-2 transition-all",
+            collapsed ? "flex-col py-2" : "justify-between px-1"
           )}>
-            <div className={cn("flex items-center gap-3", collapsed && "justify-center w-full")}>
-              <ThemeToggle />
-              {!collapsed && (
-                <div className="flex flex-col">
-                  <p className="text-[10px] font-bold text-[#f5f5f0]">Theme</p>
-                  <p className="text-[9px] text-[#a8b3af]">System synced</p>
-                </div>
+            <button
+              type="button"
+              onClick={() => void handleLogout()}
+              disabled={isLoggingOut}
+              title={collapsed ? "Logout" : undefined}
+              className={cn(
+                "group flex items-center rounded-xl border border-[#D4A574]/15 bg-[#02120e]/40 text-[#a8b3af] transition-all hover:border-[#C85A3A]/45 hover:bg-[#C85A3A]/10 hover:text-[#f5f5f0] disabled:cursor-not-allowed disabled:opacity-60",
+                collapsed ? "h-10 w-10 justify-center" : "flex-1 gap-3 px-4 py-2.5",
               )}
-            </div>
+            >
+              <LogOutIcon
+                className={cn(
+                  "h-4 w-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
+                  collapsed ? "text-[#D4A574]" : "text-[#C85A3A]",
+                )}
+              />
+              {!collapsed && (
+                <span className="text-[11px] font-black uppercase tracking-widest">{isLoggingOut ? "..." : "Logout"}</span>
+              )}
+            </button>
+
             {!collapsed && (
-              <div className="rounded-full bg-[#1B4D3E]/20 px-2 py-1 border border-[#D4A574]/10 shrink-0">
-                <p className="text-[10px] font-black text-[#D4A574]">v1.2.0</p>
+              <div className="flex items-center gap-2 rounded-xl border border-[#D4A574]/15 bg-[#02120e]/40 p-1">
+                <ThemeToggle />
+              </div>
+            )}
+            
+            {collapsed && (
+              <div className="flex flex-col gap-2 items-center">
+                <ThemeToggle />
+                <div className="h-px w-6 bg-[#D4A574]/10" />
+                <div className="rounded-full bg-[#1B4D3E]/20 p-1 border border-[#D4A574]/10 shrink-0">
+                  <p className="text-[8px] font-black text-[#D4A574]">v1.2</p>
+                </div>
               </div>
             )}
           </div>
