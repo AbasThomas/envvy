@@ -10,17 +10,18 @@ import {
   CompassIcon,
   FolderGit2Icon,
   HomeIcon,
+  LogOutIcon,
   SettingsIcon,
   ShieldCheckIcon,
   UserIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -61,6 +62,17 @@ function isActivePath(pathname: string, href: string) {
 export function NavShell({ mode = "sidebar" }: NavShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await signOut({ callbackUrl: "/login" });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   if (mode === "top") {
     return (
@@ -112,6 +124,17 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
               );
             })}
           </nav>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => void handleLogout()}
+            disabled={isLoggingOut}
+            className="mt-3 w-full justify-center border-[#D4A574]/25 bg-[#02120e]/40 text-xs font-semibold text-[#f5f5f0] hover:bg-[#1B4D3E]/40 hover:text-[#f5f5f0]"
+          >
+            <LogOutIcon className="mr-2 h-4 w-4" />
+            {isLoggingOut ? "Logging out..." : "Logout"}
+          </Button>
         </div>
       </header>
     );
@@ -120,7 +143,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
   return (
     <aside 
       className={cn(
-        "sticky top-0 hidden h-screen flex-col border-r border-[#D4A574]/15 bg-[#02120e]/85 p-4 shadow-[0_16px_64px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] lg:flex",
+        "no-scrollbar sticky top-0 hidden h-screen flex-col overflow-y-auto border-r border-[#D4A574]/15 bg-[#02120e]/85 p-4 shadow-[0_16px_64px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] lg:flex",
         collapsed ? "w-[80px]" : "w-[260px]"
       )}
     >
@@ -135,7 +158,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
         )}
       </button>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col">
         <Link href="/" className={cn(
           "group relative flex items-center gap-3 rounded-2xl border border-[#D4A574]/10 bg-gradient-to-br from-[#1B4D3E]/20 to-transparent transition-all duration-300 hover:border-[#D4A574]/30",
           collapsed ? "px-2 py-4 justify-center" : "px-4 py-4"
@@ -222,7 +245,28 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
           })}
         </nav>
 
-        <div className="mt-auto flex w-full flex-col space-y-4 overflow-hidden pt-4">
+        <div className="mt-auto flex w-full flex-col space-y-4 pt-4">
+          <button
+            type="button"
+            onClick={() => void handleLogout()}
+            disabled={isLoggingOut}
+            title={collapsed ? "Logout" : undefined}
+            className={cn(
+              "group flex w-full items-center rounded-xl border border-[#D4A574]/20 bg-[#02120e]/40 text-[#a8b3af] transition-all hover:border-[#C85A3A]/45 hover:bg-[#1B4D3E]/25 hover:text-[#f5f5f0] disabled:cursor-not-allowed disabled:opacity-60",
+              collapsed ? "justify-center p-3" : "gap-3 px-4 py-3",
+            )}
+          >
+            <LogOutIcon
+              className={cn(
+                "h-4 w-4 shrink-0 transition-transform duration-300 group-hover:scale-110",
+                collapsed ? "text-[#D4A574]" : "text-[#C85A3A]",
+              )}
+            />
+            {!collapsed && (
+              <span className="text-xs font-bold tracking-wide">{isLoggingOut ? "Logging out..." : "Logout"}</span>
+            )}
+          </button>
+
           <AnimatePresence mode="wait">
             {!collapsed && (
               <motion.div
