@@ -15,13 +15,20 @@ type RepoItem = {
   description: string | null;
   tags: string[];
   isPublic: boolean;
-  updatedAt: string;
+  updatedAt?: string;
   _count?: {
     stars?: number;
     envs?: number;
     forks?: number;
   };
 };
+
+function formatUpdatedAt(value?: string) {
+  if (!value) return "Recently updated";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently updated";
+  return date.toLocaleDateString();
+}
 
 export function RepoList({ repos }: { repos: RepoItem[] }) {
   return (
@@ -45,7 +52,7 @@ export function RepoList({ repos }: { repos: RepoItem[] }) {
                     </CardTitle>
                     <div className="flex items-center gap-2 text-xs text-[#a8b3af]">
                       <CalendarIcon className="h-3 w-3" />
-                      <span>{new Date(repo.updatedAt).toLocaleDateString()}</span>
+                      <span>{formatUpdatedAt(repo.updatedAt)}</span>
                     </div>
                   </div>
                   <Badge 
