@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 
 const LANDING_PATH = "/runlyx-landing.html";
 
@@ -13,6 +14,47 @@ function executeScripts(root: HTMLElement) {
     }
     replacement.text = script.textContent ?? "";
     script.parentNode?.replaceChild(replacement, script);
+  }
+}
+
+function updateAnchorLabel(anchor: HTMLAnchorElement, label: string) {
+  const textNodes = Array.from(anchor.childNodes).filter(
+    (node) => node.nodeType === Node.TEXT_NODE && !!node.textContent?.trim(),
+  );
+
+  if (textNodes.length) {
+    textNodes[0].textContent = ` ${label} `;
+    return;
+  }
+
+  const labelledSpan = anchor.querySelector<HTMLSpanElement>('[data-envii-auth-label="true"]');
+  if (labelledSpan) {
+    labelledSpan.textContent = label;
+    return;
+  }
+
+  const fallback = document.createElement("span");
+  fallback.setAttribute("data-envii-auth-label", "true");
+  fallback.textContent = label;
+  anchor.prepend(fallback);
+}
+
+function applyAuthenticatedCtas(root: HTMLElement) {
+  const loginLinks = Array.from(root.querySelectorAll<HTMLAnchorElement>('a[href="/login"]'));
+  const signupLinks = Array.from(root.querySelectorAll<HTMLAnchorElement>('a[href="/signup"]'));
+
+  for (const link of loginLinks) {
+    if (link.closest("header")) {
+      link.style.display = "none";
+      continue;
+    }
+    link.setAttribute("href", "/dashboard");
+    updateAnchorLabel(link, "Dashboard");
+  }
+
+  for (const link of signupLinks) {
+    link.setAttribute("href", "/dashboard");
+    updateAnchorLabel(link, link.closest("header") ? "Dashboard" : "Go to Dashboard");
   }
 }
 
@@ -54,6 +96,7 @@ async function loadHeadAssets(doc: Document) {
 }
 
 export default function HomePage() {
+  const { status } = useSession();
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,6 +125,9 @@ export default function HomePage() {
 
       containerRef.current.innerHTML = doc.body.innerHTML;
       executeScripts(containerRef.current);
+      if (status === "authenticated") {
+        applyAuthenticatedCtas(containerRef.current);
+      }
     }
 
     mountClone().catch(() => {
@@ -98,6 +144,11 @@ export default function HomePage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (status !== "authenticated" || !containerRef.current) return;
+    applyAuthenticatedCtas(containerRef.current);
+  }, [status]);
 
   return <div ref={containerRef} className="min-h-screen" suppressHydrationWarning />;
 }
