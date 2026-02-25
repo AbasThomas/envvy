@@ -8,6 +8,7 @@ import GitHub from "next-auth/providers/github";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
+import { withPrismaResilience } from "@/lib/prisma-resilience";
 
 function createAuthApiToken() {
   return `${crypto.randomUUID().replace(/-/g, "")}${crypto.randomUUID().replace(/-/g, "")}`;
@@ -63,44 +64,50 @@ const providers: Array<ReturnType<typeof Credentials> | ReturnType<typeof Google
       const parsed = credentialSchema.safeParse(rawCredentials);
       if (!parsed.success) return null;
 
-      const user = await prisma.user.findUnique({
-        where: { email: parsed.data.email.toLowerCase() },
-      });
-      if (!user) return null;
+      return withPrismaResilience(
+        "auth.authorize",
+        async () => {
+          const user = await prisma.user.findUnique({
+            where: { email: parsed.data.email.toLowerCase() },
+          });
+          if (!user) return null;
 
-      if (parsed.data.pin) {
-        const pinRows = await prisma.$queryRaw<Array<{ cli_pin_hash: string | null }>>`
-          SELECT "cli_pin_hash"
-          FROM "User"
-          WHERE "id" = ${user.id}
-          LIMIT 1
-        `;
-        const pinHash = pinRows[0]?.cli_pin_hash ?? null;
-        if (!pinHash) return null;
-        const pinValid = await compare(parsed.data.pin, pinHash);
-        if (!pinValid) return null;
-      } else {
-        if (!user.passwordHash || !parsed.data.password) return null;
-        const passwordValid = await compare(parsed.data.password, user.passwordHash);
-        if (!passwordValid) return null;
-      }
+          if (parsed.data.pin) {
+            const pinRows = await prisma.$queryRaw<Array<{ cli_pin_hash: string | null }>>`
+              SELECT "cli_pin_hash"
+              FROM "User"
+              WHERE "id" = ${user.id}
+              LIMIT 1
+            `;
+            const pinHash = pinRows[0]?.cli_pin_hash ?? null;
+            if (!pinHash) return null;
+            const pinValid = await compare(parsed.data.pin, pinHash);
+            if (!pinValid) return null;
+          } else {
+            if (!user.passwordHash || !parsed.data.password) return null;
+            const passwordValid = await compare(parsed.data.password, user.passwordHash);
+            if (!passwordValid) return null;
+          }
 
-      if (!user.apiToken) {
-        const refreshed = await prisma.user.update({
-          where: { id: user.id },
-          data: { apiToken: createAuthApiToken() },
-        });
-        user.apiToken = refreshed.apiToken;
-      }
+          if (!user.apiToken) {
+            const refreshed = await prisma.user.update({
+              where: { id: user.id },
+              data: { apiToken: createAuthApiToken() },
+            });
+            user.apiToken = refreshed.apiToken;
+          }
 
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        planTier: user.planTier,
-        apiToken: user.apiToken,
-      };
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+            planTier: user.planTier,
+            apiToken: user.apiToken,
+          };
+        },
+        null,
+      );
     },
   }),
 ];
@@ -145,8 +152,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         mutableToken.apiToken = (user as { apiToken?: string | null }).apiToken ?? null;
       }
 
-      if (!mutableToken.id && mutableToken.email) {
-        const dbUser = await prisma.user.findUnique({ where: { email: mutableToken.email } });
+      if (!mutableToken.id && typeof mutableToken.email === "string") {
+        const email = mutableToken.email;
+        const dbUser = await withPrismaResilience(
+          "auth.jwt.userLookup",
+          () => prisma.user.findUnique({ where: { email } }),
+          null,
+        );
         if (dbUser) {
           mutableToken.id = dbUser.id;
           mutableToken.planTier = dbUser.planTier;
@@ -173,12 +185,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
     async signIn({ user }) {
       if (!user.id) return;
-      const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+      const dbUser = await withPrismaResilience(
+        "auth.events.signIn.findUser",
+        () => prisma.user.findUnique({ where: { id: user.id } }),
+        null,
+      );
       if (!dbUser?.apiToken) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { apiToken: createAuthApiToken() },
-        });
+        await withPrismaResilience(
+          "auth.events.signIn.ensureToken",
+          () =>
+            prisma.user.update({
+              where: { id: user.id },
+              data: { apiToken: createAuthApiToken() },
+            }),
+          null,
+        );
       }
     },
   },

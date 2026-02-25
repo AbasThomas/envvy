@@ -4,6 +4,7 @@ import {
   BookOpenIcon,
   ChevronRightIcon,
   CodeIcon,
+  CreditCardIcon,
   FolderGit2Icon,
   GitForkIcon,
   HistoryIcon,
@@ -972,30 +973,6 @@ envii push`}</CodeBlock>
               </div>
             </div>
           </div>
-        </section>
-            <Step number={1} title="Go to Settings → Billing">
-              Navigate to{" "}
-              <Link href="/settings/billing" className="text-[#D4A574] hover:underline">
-                Settings → Billing
-              </Link>
-              .
-            </Step>
-            <Step number={2} title="Select a plan">
-              Choose BASIC, PRO, or TEAM and click{" "}
-              <strong className="text-[#f5f5f0]">Upgrade</strong>.
-            </Step>
-            <Step number={3} title="Complete payment via Paystack">
-              You are redirected to a Paystack checkout. Payments are accepted via card, bank
-              transfer, and USSD.
-            </Step>
-            <Step number={4} title="Plan activates immediately">
-              After payment is verified your plan tier is updated and you gain access to the new
-              features right away.
-            </Step>
-          </div>
-          <Callout type="info">
-            You can view your full payment history and subscription status from the Billing page.
-          </Callout>
         </section>
 
         {/* ── SECURITY ── */}

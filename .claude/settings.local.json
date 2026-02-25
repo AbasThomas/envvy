@@ -3,7 +3,9 @@
     "allow": [
       "Bash(cd \"C:/Users/USER/Desktop/envii\" && npx prisma migrate deploy 2>&1)",
       "Bash(python3:*)",
-      "Bash(tail:*)"
+      "Bash(tail:*)",
+      "Bash(powershell:*)",
+      "Bash(node:*)"
     ]
   }
 }
