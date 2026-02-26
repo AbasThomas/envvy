@@ -16,12 +16,25 @@ const LOCALHOST_URL_REGEX = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:\
 function normalizeAuthUrl(value?: string) {
   const trimmed = value?.trim();
   if (!trimmed) return undefined;
-  return trimmed.replace(/\/+$/, "");
+  const unquoted = trimmed.replace(/^['"]+|['"]+$/g, "").trim();
+  if (!unquoted) return undefined;
+  return unquoted.replace(/\/+$/, "");
+}
+
+function isValidAbsoluteUrl(value?: string) {
+  if (!value) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 const configuredAuthUrl = normalizeAuthUrl(process.env.AUTH_URL ?? process.env.NEXTAUTH_URL);
 const fallbackAuthUrl =
-  process.env.NODE_ENV === "production" && (!configuredAuthUrl || LOCALHOST_URL_REGEX.test(configuredAuthUrl))
+  process.env.NODE_ENV === "production" &&
+  (!configuredAuthUrl || !isValidAbsoluteUrl(configuredAuthUrl) || LOCALHOST_URL_REGEX.test(configuredAuthUrl))
     ? PROD_CANONICAL_URL
     : configuredAuthUrl;
 
