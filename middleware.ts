@@ -39,12 +39,53 @@ const publicApiAllowlist = new Set([
   "/api/ai/suggestions",
 ]);
 
+const AUTH_COOKIE_CANDIDATES = [
+  "__Secure-authjs.session-token",
+  "__Secure-next-auth.session-token",
+  "authjs.session-token",
+  "next-auth.session-token",
+] as const;
+
+async function readSessionToken(req: NextRequest) {
+  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+  if (!secret) return null;
+
+  const forwardedProto = req.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const isHttpsRequest =
+    req.nextUrl.protocol === "https:" ||
+    forwardedProto === "https" ||
+    process.env.NODE_ENV === "production";
+
+  const defaultToken = await getToken({
+    req,
+    secret,
+    secureCookie: isHttpsRequest,
+  });
+  if (defaultToken) return defaultToken;
+
+  const fallbackToken = await getToken({
+    req,
+    secret,
+    secureCookie: !isHttpsRequest,
+  });
+  if (fallbackToken) return fallbackToken;
+
+  for (const cookieName of AUTH_COOKIE_CANDIDATES) {
+    const explicitToken = await getToken({
+      req,
+      secret,
+      cookieName,
+      secureCookie: cookieName.startsWith("__Secure-"),
+    });
+    if (explicitToken) return explicitToken;
+  }
+
+  return null;
+}
+
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  const token = await getToken({
-    req,
-    secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-  });
+  const token = await readSessionToken(req);
   const hasBearerAuth = req.headers.get("authorization")?.startsWith("Bearer ") ?? false;
 
   if (pathname.startsWith("/api/")) {

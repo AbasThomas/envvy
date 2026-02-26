@@ -103,14 +103,17 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
         }
       }
 
+      const callbackUrl = isSignup ? "/onboarding" : nextPath;
       const credentialsPayload: {
         email: string;
         redirect: false;
+        callbackUrl: string;
         password?: string;
         pin?: string;
       } = {
         email: values.email,
         redirect: false,
+        callbackUrl,
       };
       if (isSignup || loginMethod === "password") {
         credentialsPayload.password = values.password;
@@ -127,7 +130,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
 
       if (isSignup) {
         toast.success("Account created");
-        router.push("/onboarding");
+        router.replace(result.url ?? "/onboarding");
         router.refresh();
         return;
       }
@@ -146,7 +149,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
       }
 
       toast.success("Signed in");
-      router.push(redirectPath);
+      router.replace(redirectPath);
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
