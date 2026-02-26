@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon, GithubIcon, KeyRoundIcon, MailIcon, RefreshCwIcon, ShieldCheckIcon } from "@/components/ui/icons";
+import { ArrowRightIcon, EyeIcon, EyeOffIcon, GithubIcon, KeyRoundIcon, MailIcon, RefreshCwIcon, ShieldCheckIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -44,6 +44,8 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"password" | "pin">("password");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isSignup = mode === "signup";
 
@@ -283,18 +285,28 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
                     )}
                   </div>
                   {isSignup || loginMethod === "password" ? (
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
-                      {...form.register("password")} 
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter password"
+                        className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 pr-11 focus:ring-[#D4A574]/30"
+                        {...form.register("password")}
+                      />
+                      <button
+                        type="button"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        onClick={() => setShowPassword((value) => !value)}
+                        className="absolute inset-y-0 right-3 inline-flex items-center text-[#a8b3af] transition-colors hover:text-[#f5f5f0]"
+                      >
+                        {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                      </button>
+                    </div>
                   ) : (
                     <Input
                       inputMode="numeric"
                       maxLength={6}
                       placeholder="000000"
-                      className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11 text-center text-xl font-black tracking-[0.5em]"
+                      className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 text-center text-xl font-black tracking-[0.5em] focus:ring-[#D4A574]/30"
                       {...form.register("pin")}
                       onChange={(event) => {
                         const value = event.target.value.replace(/\D/g, "").slice(0, 6);
@@ -308,12 +320,22 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
                   <>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Confirm Password</label>
-                      <Input 
-                        type="password" 
-                        placeholder="••••••••" 
-                        className="bg-[#02120e]/80 border-[#D4A574]/15 focus:ring-[#D4A574]/30 h-11"
-                        {...form.register("confirmPassword")} 
-                      />
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm password"
+                          className="h-11 border-[#D4A574]/15 bg-[#02120e]/80 pr-11 focus:ring-[#D4A574]/30"
+                          {...form.register("confirmPassword")}
+                        />
+                        <button
+                          type="button"
+                          aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                          onClick={() => setShowConfirmPassword((value) => !value)}
+                          className="absolute inset-y-0 right-3 inline-flex items-center text-[#a8b3af] transition-colors hover:text-[#f5f5f0]"
+                        >
+                          {showConfirmPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#D4A574]">Referral Code (Optional)</label>

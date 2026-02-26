@@ -19,6 +19,8 @@ import {
   CopyIcon as HiCopyIcon,
   CreditCardIcon as HiCreditCardIcon,
   ExternalLink as HiExternalLink,
+  Eye as HiEye,
+  EyeOff as HiEyeOff,
   FilterIcon as HiFilterIcon,
   GitForkIcon as HiGitForkIcon,
   GithubIcon as HiGithubIcon,
@@ -90,6 +92,8 @@ export const CompassIcon = createIcon("CompassIcon", HiCompassIcon);
 export const CopyIcon = createIcon("CopyIcon", HiCopyIcon);
 export const CreditCardIcon = createIcon("CreditCardIcon", HiCreditCardIcon);
 export const ExternalLinkIcon = createIcon("ExternalLinkIcon", HiExternalLink);
+export const EyeIcon = createIcon("EyeIcon", HiEye);
+export const EyeOffIcon = createIcon("EyeOffIcon", HiEyeOff);
 export const FilterIcon = createIcon("FilterIcon", HiFilterIcon);
 export const FolderGit2Icon = createIcon("FolderGit2Icon", HiCodeFolderIcon);
 export const GitForkIcon = createIcon("GitForkIcon", HiGitForkIcon);
