@@ -92,7 +92,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                 <MenuIcon className="h-5 w-5" />
               </Button>
               <Link href="/" className="text-xl font-black tracking-tight text-[#f5f5f0] sm:text-2xl">
-                Envii
+                Envvy
               </Link>
             </div>
 
@@ -164,7 +164,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between mb-8">
                     <Link href="/" className="text-2xl font-black tracking-tighter text-[#f5f5f0]">
-                      Envii
+                      Envvy
                     </Link>
                     <Button
                       variant="ghost"
@@ -261,7 +261,7 @@ export function NavShell({ mode = "sidebar" }: NavShellProps) {
                 animate={{ opacity: 1, x: 0 }}
                 className="text-2xl font-black tracking-tighter text-[#f5f5f0]"
               >
-                Envii
+                Envvy
               </motion.span>
             )}
           </Link>

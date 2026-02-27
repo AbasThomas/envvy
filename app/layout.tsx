@@ -20,11 +20,11 @@ const body = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "envii | GitHub for environment variables",
-    template: "%s | envii",
+    default: "Envvy: Secure Your Secrets, Envy the Ease",
+    template: "%s | Envvy",
   },
   description:
-    "Backup, version, share, and deploy encrypted env files with a CLI and collaborative dashboard.",
+    "Envvy is an open-source platform to backup, version, share, and deploy encrypted env files with a CLI and collaborative dashboard.",
 };
 
 export default function RootLayout({

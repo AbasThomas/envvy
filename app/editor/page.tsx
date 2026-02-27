@@ -134,8 +134,8 @@ export default function EditorPage() {
       {/* Controls Card */}
       <Card className="glass relative overflow-hidden border-[#D4A574]/20 bg-[#02120e]/60 p-5 sm:p-8">
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#D4A574]/5 blur-3xl" />
-        <div className="relative z-10 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_200px_200px_220px_auto] items-end">
-          <div className="space-y-2">
+        <div className="relative z-10 grid items-end gap-4 sm:gap-6 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(0,1fr)_200px_220px_220px_auto]">
+          <div className="min-w-0 space-y-2">
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Repository</label>
             <select
               className="themed-select h-11 w-full rounded-xl border border-[#D4A574]/15 bg-[#02120e]/80 px-3 text-sm text-[#f5f5f0] outline-none focus:ring-1 focus:ring-[#D4A574]/30"
@@ -166,7 +166,7 @@ export default function EditorPage() {
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A574]/70">Commit Message</label>
             <Input 
               placeholder="Rotate API keys..."
@@ -195,7 +195,7 @@ export default function EditorPage() {
           </div>
 
           <Button
-            className="group flex h-11 items-center justify-center gap-2 px-6 sm:px-8 bg-gradient-to-r from-[#D4A574] to-[#C85A3A] font-black uppercase tracking-widest text-[#02120e] shadow-lg shadow-[#D4A574]/10 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            className="group flex h-11 w-full items-center justify-center gap-2 px-6 sm:px-8 2xl:w-auto bg-gradient-to-r from-[#D4A574] to-[#C85A3A] font-black uppercase tracking-widest text-[#02120e] shadow-lg shadow-[#D4A574]/10 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending || !repoId || !isValidRepoPin(repoPin)}
           >
@@ -211,8 +211,8 @@ export default function EditorPage() {
         </div>
       </Card>
 
-      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_360px]">
-        <div className="space-y-4">
+      <div className="grid gap-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="min-w-0 space-y-4">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />

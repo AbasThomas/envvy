@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "envii",
-    short_name: "envii",
-    description: "GitHub of environment variables. Backup, version, and collaborate on .env files.",
+    name: "Envvy",
+    short_name: "Envvy",
+    description: "Envvy: Secure Your Secrets, Envy the Ease. Open-source backup, versioning, and collaboration for .env files.",
     start_url: "/",
     display: "standalone",
     background_color: "#0b1020",

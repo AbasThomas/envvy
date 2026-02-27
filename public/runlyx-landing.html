@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>envii - Protect envs. Ship smarter.</title>
+  <title>Envvy - Secure Your Secrets, Envy the Ease</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -19,10 +19,12 @@
     @keyframes float-chip-1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-8px,-12px)} }
     @keyframes float-chip-2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(10px,8px)} }
     @keyframes float-chip-3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-6px,10px)} }
+    @keyframes float-chip-4 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(8px,-8px)} }
     .float-cursor { animation: float-cursor 3s ease-in-out infinite; }
     .float-chip-1 { animation: float-chip-1 4s ease-in-out infinite; }
     .float-chip-2 { animation: float-chip-2 4.5s ease-in-out infinite; }
     .float-chip-3 { animation: float-chip-3 4.2s ease-in-out infinite; }
+    .float-chip-4 { animation: float-chip-4 4.4s ease-in-out infinite; }
     @keyframes fadeSlideIn { 0% { opacity: 0; transform: translateY(30px); filter: blur(8px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
     .animate-enter { animation: fadeSlideIn 0.8s ease-out both; }
     .animate-enter-delay-2 { animation: fadeSlideIn 0.8s ease-out 0.2s both; }
@@ -127,7 +129,7 @@
       <div class="rounded-2xl border border-[#D4A574]/20 bg-[#02120e]/70 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
         <div class="flex items-center justify-between p-2 pl-4 pr-2 sm:p-3 sm:pl-5 sm:pr-3">
           <a href="/" class="inline-flex items-center group">
-            <span class="text-2xl font-black tracking-tighter text-[#f5f5f0]">Envii</span>
+            <span class="text-2xl font-black tracking-tighter text-[#f5f5f0]">Envvy</span>
           </a>
           
           <nav class="hidden items-center gap-4 text-[11px] font-bold uppercase tracking-widest text-[#D4A574]/60 lg:flex lg:gap-8">
@@ -169,6 +171,10 @@
             <span class="block whitespace-nowrap rounded-lg border border-[#D4A574]/20 bg-[#02120e] px-3 py-1.5 text-xs font-medium text-[#D4A574]">Zero Latency</span>
             <span class="mx-auto -mt-1 block h-2 w-2 rotate-45 rounded-sm bg-[#02120e]"></span>
           </span>
+          <span class="float-cursor float-chip-4 absolute right-[18%] -top-2 hidden md:block">
+            <span class="block whitespace-nowrap rounded-lg border border-[#D4A574]/25 bg-[#02120e] px-3 py-1.5 text-xs font-semibold text-[#D4A574]">Open Source</span>
+            <span class="mx-auto -mt-1 block h-2 w-2 rotate-45 rounded-sm bg-[#02120e]"></span>
+          </span>
         </div>
 
         <!-- Headline -->
@@ -180,33 +186,32 @@
           </div>
 
           <h1 class="mx-auto max-w-5xl text-4xl font-black tracking-tighter text-white sm:text-7xl md:text-8xl">
-            <span class="text-[#f5f5f0]">Protect.</span>
             <span class="relative inline-block">
               <span class="absolute -inset-4 rounded-full bg-[#D4A574]/10 blur-3xl"></span>
-              <span class="relative inline-block text-[#D4A574]">Ship.</span>
+              <span class="relative inline-block text-[#D4A574]">Secure Your Secrets,</span>
             </span>
-            <span class="text-[#f5f5f0]">Secure.</span>
+            <span class="text-[#f5f5f0]">Envy the Ease</span>
           </h1>
           <p class="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-[#8fa49d] font-medium">
-            The CLI-first platform for AES-256 encrypted environment backups, 
-            version history, and zero-knowledge sharing across your team.
+            Open-source secret management with encrypted backups, version history,
+            and zero-knowledge collaboration for modern teams.
           </p>
 
           <!-- CTAs -->
           <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a href="/signup" class="btn-primary inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-base font-semibold text-white" style="background: linear-gradient(135deg, #c8854a, #a03020); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 8px 24px rgba(200,90,58,.35);">
-              Start with envii
+              Start with Envvy
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
-            <a href="#cli-demo" class="btn-secondary group inline-flex items-center gap-2.5 rounded-lg border border-[#D4A574]/20 bg-[#1B4D3E]/15 px-7 py-3.5 text-base font-medium text-[#D4A574] ring-0">
-              Watch CLI Demo
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"></path></svg>
+            <a href="https://github.com/AbasThomas/envvy" target="_blank" rel="noopener noreferrer" class="btn-secondary group inline-flex items-center gap-2.5 rounded-lg border border-[#D4A574]/20 bg-[#1B4D3E]/15 px-7 py-3.5 text-base font-medium text-[#D4A574] ring-0">
+              Star on GitHub
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             </a>
           </div>
 
           <!-- Trust line -->
           <p class="mt-6 text-xs text-[#4d6d62] tracking-wide">
-            No credit card required &nbsp;-&nbsp; Free plan available &nbsp;-&nbsp; CLI + Dashboard
+            Open source on GitHub &nbsp;-&nbsp; Star the project &nbsp;-&nbsp; Community contributions welcome
           </p>
         </div>
 
@@ -323,24 +328,24 @@ $ envii push
        STATS STRIP
   ============================= -->
   <div class="animate-on-scroll relative z-10 mx-auto max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 gap-3 rounded-2xl border border-[#D4A574]/12 bg-[#02120e]/60 p-4 backdrop-blur md:grid-cols-4">
-      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
-        <span class="text-2xl font-bold text-[#D4A574] tracking-tight">10k+</span>
-        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Teams protected</span>
-      </div>
-      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
-        <span class="text-2xl font-bold text-[#D4A574] tracking-tight">99.98%</span>
-        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Backup uptime</span>
-      </div>
-      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
-        <span class="text-2xl font-bold text-[#D4A574] tracking-tight">&lt; 2s</span>
-        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Average backup time</span>
-      </div>
-      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
-        <span class="text-2xl font-bold text-[#D4A574] tracking-tight">0</span>
-        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Breaches to date</span>
-      </div>
-    </div>
+	    <div class="grid grid-cols-2 gap-3 rounded-2xl border border-[#D4A574]/12 bg-[#02120e]/60 p-4 backdrop-blur md:grid-cols-4">
+	      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
+	        <span class="text-xl font-bold text-[#D4A574] tracking-tight">Open Source</span>
+	        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Public GitHub repository</span>
+	      </div>
+	      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
+	        <span class="text-xl font-bold text-[#D4A574] tracking-tight">Fork Friendly</span>
+	        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Clone and customize freely</span>
+	      </div>
+	      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
+	        <span class="text-xl font-bold text-[#D4A574] tracking-tight">PRs Welcome</span>
+	        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Contribute improvements</span>
+	      </div>
+	      <div class="stat-item relative flex flex-col items-center gap-1 rounded-xl py-4 px-2 text-center">
+	        <a href="https://github.com/AbasThomas/envii" target="_blank" rel="noopener noreferrer" class="text-xl font-bold text-[#D4A574] tracking-tight hover:underline">Star on GitHub</a>
+	        <span class="text-[11px] text-[#4d6d62] uppercase tracking-wider">Help Envvy grow</span>
+	      </div>
+	    </div>
   </div>
 
   <!-- ============================
@@ -384,7 +389,7 @@ $ envii push
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
         <h3 class="text-base font-semibold text-white">Drift Detection</h3>
-        <p class="mt-2 text-sm leading-relaxed text-[#7a9490]">envii watches for env changes in real time and alerts your team when production drifts from the last known-good backup.</p>
+        <p class="mt-2 text-sm leading-relaxed text-[#7a9490]">Envvy watches for env changes in real time and alerts your team when production drifts from the last known-good backup.</p>
       </div>
 
       <div class="feature-card rounded-2xl border border-[#D4A574]/10 bg-[#02120e]/50 p-6">
@@ -418,7 +423,7 @@ $ envii push
       <div class="relative grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr]">
         <!-- left: description + queue -->
         <div class="p-6 sm:p-12">
-          <span class="inline-flex rounded-md border border-[#D4A574]/30 bg-[#1B4D3E]/20 px-3 py-1 text-[11px] uppercase tracking-widest text-[#D4A574]">envii-cli command center</span>
+          <span class="inline-flex rounded-md border border-[#D4A574]/30 bg-[#1B4D3E]/20 px-3 py-1 text-[11px] uppercase tracking-widest text-[#D4A574]">Envvy CLI command center</span>
           <h2 class="mt-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl">
             Incident-ready CLI
             <span class="block text-[#D4A574]">with execution playback.</span>
@@ -585,7 +590,7 @@ $ envii push
         <!-- left: plan selector -->
         <div class="p-8 sm:p-12">
           <span class="inline-flex rounded-full border border-[#D4A574]/25 bg-[#1B4D3E]/20 px-3 py-1 text-[11px] uppercase tracking-widest text-[#D4A574]">Pricing</span>
-          <h2 class="mt-4 text-3xl font-bold text-white sm:text-4xl">Transparent pricing,<span class="block text-[#D4A574]">built for envii scale</span></h2>
+          <h2 class="mt-4 text-3xl font-bold text-white sm:text-4xl">Transparent pricing,<span class="block text-[#D4A574]">built for Envvy scale</span></h2>
           <p class="mt-3 text-sm text-[#8fa49d]">Start free, move to Basic at NGN 800, and scale to Pro as your production footprint grows.</p>
 
       <!-- billing toggle -->
@@ -667,7 +672,7 @@ $ envii push
         <span class="inline-flex rounded-full border border-[#D4A574]/25 bg-[#1B4D3E]/20 px-3 py-1 text-[11px] uppercase tracking-widest text-[#D4A574]">Get started today</span>
         <h2 class="mt-5 text-3xl font-bold text-white sm:text-4xl md:text-5xl">Stop losing sleep over<br class="hidden sm:block" /> leaked env files.</h2>
         <p class="mx-auto mt-4 max-w-xl text-[#8fa49d] text-sm leading-relaxed">
-          Join thousands of engineers who trust envii to protect their production environments. Set up in under 60 seconds.
+          Join engineers who trust Envvy to protect their production environments. Set up in under 60 seconds.
         </p>
         <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <a href="/signup" class="btn-primary inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-base font-bold text-white" style="background: linear-gradient(135deg, #c8854a, #a03020); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 10px 32px rgba(200,90,58,.35);">
@@ -690,9 +695,9 @@ $ envii push
         <div class="grid grid-cols-1 gap-10 border-b border-[#D4A574]/10 pb-10 md:grid-cols-2 lg:grid-cols-5">
           <div class="lg:col-span-2">
             <div class="mb-4 inline-flex items-center group">
-              <span class="text-2xl font-black tracking-tighter text-[#f5f5f0]">Envii</span>
+              <span class="text-2xl font-black tracking-tighter text-[#f5f5f0]">Envvy</span>
             </div>
-            <p class="mb-4 text-sm leading-relaxed text-[#4d6d62] max-w-xs">envii helps teams back up, version, and restore environment variables with confidence across CLI and dashboard workflows.</p>
+            <p class="mb-4 text-sm leading-relaxed text-[#4d6d62] max-w-xs">Envvy helps teams back up, version, and restore environment variables with confidence across CLI and dashboard workflows.</p>
             <div class="flex items-center gap-3">
               <a href="#" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-[#D4A574]/15 bg-[#1B4D3E]/20 text-[#6e7d78] transition-colors hover:text-[#D4A574]">
                 <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
@@ -728,7 +733,7 @@ $ envii push
           </div>
         </div>
         <div class="flex flex-col items-center justify-between gap-4 pt-6 md:flex-row">
-          <p class="text-xs text-[#4d6d62]">© 2026 envii. All rights reserved.</p>
+          <p class="text-xs text-[#4d6d62]">© 2026 Envvy. All rights reserved.</p>
           <div class="flex items-center gap-5">
             <a href="#" class="text-xs text-[#4d6d62] transition-colors hover:text-[#D4A574]">Privacy Policy</a>
             <a href="#" class="text-xs text-[#4d6d62] transition-colors hover:text-[#D4A574]">Terms of Service</a>
@@ -865,7 +870,7 @@ $ envii push
         .replace(/\/\/.*/g, m => `<span class="tok-cmt">${m}</span>`)
         .replace(/\b(const|type|function|return|await|async|new)\b/g, '<span class="tok-kw">$1</span>')
         .replace(/"([^"]*)"/g, '<span class="tok-str">"$1"</span>')
-        .replace(/\b(Envii|Playbook|Template)\b/g, '<span class="tok-fn">$1</span>');
+        .replace(/\b(Envvy|Playbook|Template)\b/g, '<span class="tok-fn">$1</span>');
 
       const data = {
         collab: {
@@ -873,21 +878,21 @@ $ envii push
           tagline: "Review and restore env changes together in real time.",
           p1: "Collaborate on remediation with shared cursors, comments, and versioned playbook saves.",
           p2: "Everyone on call sees the same env change timeline before anything is pushed to production.",
-          code: `// shared env workflow\nconst s = Envii.Playbook.open("recover-env");\n\ns.apply("envii restore payments-api");\ns.comment(2, "Verify checksum before promotion");\ns.save("v1.2.1", "Safer rollback guardrails");`
+          code: `// shared env workflow\nconst s = Envvy.Playbook.open("recover-env");\n\ns.apply("envii restore payments-api");\ns.comment(2, "Verify checksum before promotion");\ns.save("v1.2.1", "Safer rollback guardrails");`
         },
         templates: {
           title: "Parameterized env templates",
           tagline: "Reusable env workflows with typed inputs.",
           p1: "Standardize repetitive operations like secret rotation, region overrides, and restore scopes.",
           p2: "Every run records immutable input values for audit and rollback confidence.",
-          code: `// template inputs\ntype Params = { repo: string, env: "staging" | "production" }\n\nconst t = Envii.Template.use<Params>("rotate-secret");\nt.run({ repo: "payments-api", env: "production" });`
+          code: `// template inputs\ntype Params = { repo: string, env: "staging" | "production" }\n\nconst t = Envvy.Template.use<Params>("rotate-secret");\nt.run({ repo: "payments-api", env: "production" });`
         },
         safety: {
           title: "Safety and approvals",
           tagline: "Dry runs, guardrails, and multi-step approvals.",
           p1: "Protect production env updates with policy checks, dry runs, and reviewer requirements.",
           p2: "Each approval and execution path is logged for compliance and post-incident review.",
-          code: `// safety first\nconst p = Envii.Playbook("prod-env-change");\np.requireApproval({ teams: ["SRE"], min: 2 });\np.dryRun().assert("secretsMissing === 0");\np.execute();`
+          code: `// safety first\nconst p = Envvy.Playbook("prod-env-change");\np.requireApproval({ teams: ["SRE"], min: 2 });\np.dryRun().assert("secretsMissing === 0");\np.execute();`
         }
       };
 

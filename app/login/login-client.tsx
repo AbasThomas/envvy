@@ -174,7 +174,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
         <div className="flex flex-col justify-center space-y-8 pr-4">
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center">
-              <span className="text-3xl font-black tracking-tighter text-[#f5f5f0]">Envii</span>
+              <span className="text-3xl font-black tracking-tighter text-[#f5f5f0]">Envvy</span>
             </Link>
             <h1 className="text-5xl font-black tracking-tight text-[#f5f5f0] lg:text-6xl">
               {isSignup ? (
@@ -379,7 +379,7 @@ export function LoginClient({ nextPath, mode, defaultReferralCode }: LoginClient
                 <span className="w-full border-t border-[#D4A574]/10" />
               </div>
               <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
-                <span className="bg-[#02120e] px-4 text-[#4d6d62]">New to envii?</span>
+                <span className="bg-[#02120e] px-4 text-[#4d6d62]">New to Envvy?</span>
               </div>
             </div>
 
