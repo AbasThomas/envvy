@@ -1,5 +1,5 @@
 {
-  "name": "envvy",
+  "name": "envvy-cli",
   "version": "0.1.1",
   "description": "Securely back up, version, and share environment variables across teams",
   "keywords": [

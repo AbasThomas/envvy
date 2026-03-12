@@ -8,15 +8,15 @@ The official CLI for [envvy.pxxl.pro](https://envvy.pxxl.pro).
 
 ```bash
 # Install globally to use anywhere
-npm install -g envvy
+npm install -g envvy-cli
 
 # Or use it with npx without installing
-npx envvy --help
+npx envvy-cli --help
 ```
 
 You can also use the alias `envii`:
 ```bash
-npm install -g envvy
+npm install -g envvy-cli
 envii login
 ```
 
