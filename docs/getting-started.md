@@ -1,4 +1,4 @@
-﻿# Getting Started
+# Getting Started
 
 ## Prerequisites
 
@@ -11,8 +11,12 @@
 
 ---
 
-## Installation
+### Global CLI
+```bash
+npm install -g envvy-cli
+```
 
+### Local Project
 ```bash
 git clone <repo-url>
 cd envvy
@@ -179,7 +183,7 @@ AUTH_TRUST_HOST="true"
 5. The PIN is bcryptjs-hashed and stored; you are redirected to `/dashboard`
 6. Create your first repo from the dashboard
 7. Set a **6-digit repo PIN** when prompted
-8. Start committing env snapshots via the web editor or CLI
+8. Start committing env snapshots via the web editor or CLI (use `npm install -g envvy-cli`)
 
 ---
 

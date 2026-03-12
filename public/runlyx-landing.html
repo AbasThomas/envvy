@@ -180,10 +180,7 @@
         <!-- Headline -->
         <div class="text-center">
           <!-- Label pill -->
-          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[#D4A574]/25 bg-[#1B4D3E]/20 px-4 py-1.5 text-[11px] uppercase tracking-widest text-[#D4A574]">
-            <span class="pulse-dot h-1.5 w-1.5 rounded-full bg-[#D4A574]"></span>
-            Now in general availability
-          </div>
+         
 
           <h1 class="mx-auto max-w-5xl text-4xl font-black tracking-tighter text-white sm:text-7xl md:text-8xl">
             <span class="relative inline-block">
@@ -209,10 +206,26 @@
             </a>
           </div>
 
-          <!-- Trust line -->
-          <p class="mt-6 text-xs text-[#4d6d62] tracking-wide">
-            Open source on GitHub &nbsp;-&nbsp; Star the project &nbsp;-&nbsp; Community contributions welcome
-          </p>
+        <!-- CLI Quick Install -->
+        <div class="mt-12 flex flex-col items-center animate-enter-delay-2">
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-[#D4A574] to-[#C85A3A] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+            <div class="relative flex items-center gap-4 rounded-xl border border-[#D4A574]/20 bg-[#010b09]/90 px-5 py-3 font-mono text-sm shadow-2xl overflow-hidden">
+              <span class="text-[#D4A574] font-bold select-none">$</span>
+              <span class="text-[#f5f5f0] tracking-tight">npm install -g envvy-cli</span>
+              <button onclick="copyInstallCommand(this)" class="ml-2 flex items-center justify-center p-1.5 rounded-lg hover:bg-[#1B4D3E]/40 text-[#4d6d62] hover:text-[#D4A574] transition-all" title="Copy to clipboard">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="copy-icon"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="check-icon hidden text-[#4ade80]"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+          </div>
+          <p class="mt-3 text-[10px] uppercase tracking-[0.2em] text-[#4d6d62] font-semibold">Or use <code class="text-[#D4A574]">npx envvy-cli</code> without installing</p>
+        </div>
+
+        <!-- Trust line -->
+        <p class="mt-6 text-xs text-[#4d6d62] tracking-wide">
+          Open source on GitHub &nbsp;-&nbsp; Star the project &nbsp;-&nbsp; Community contributions welcome
+        </p>
         </div>
 
         <!-- Hero dashboard mockup -->
@@ -291,12 +304,12 @@
               <div class="mt-4 rounded-2xl border border-[#D4A574]/12 bg-[#02120e]/70 p-4">
                 <div class="mb-3 flex items-center justify-between">
                   <h3 class="text-sm font-semibold text-[#D4A574]">Execution Timeline</h3>
-                  <span class="rounded-md border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-2 py-0.5 text-[10px] text-[#a8b3af] font-mono">envii-cli</span>
+                  <span class="rounded-md border border-[#D4A574]/15 bg-[#1B4D3E]/20 px-2 py-0.5 text-[10px] text-[#a8b3af] font-mono">envvy-cli</span>
                 </div>
                 <div class="space-y-2 text-xs">
                   <div class="flex items-center gap-2.5 rounded-lg bg-[#000]/30 px-3 py-2.5">
                     <span class="h-2 w-2 shrink-0 rounded-full bg-[#4ade80]"></span>
-                    <span class="text-[#d1d5db]">envii backup completed successfully</span>
+                    <span class="text-[#d1d5db]">envvy backup completed successfully</span>
                     <span class="ml-auto font-mono text-[#4d6d62]">00:01.2</span>
                   </div>
                   <div class="flex items-center gap-2.5 rounded-lg bg-[#000]/30 px-3 py-2.5">
@@ -310,12 +323,12 @@
                     <span class="ml-auto font-mono text-[#C85A3A]">live</span>
                   </div>
                 </div>
-                <pre class="mt-4 whitespace-pre-wrap rounded-xl bg-[#000]/50 p-4 font-mono text-xs leading-relaxed text-[#7dd3b5]">$ envii login
-$ envii init
-$ envii backup
+                <pre class="mt-4 whitespace-pre-wrap rounded-xl bg-[#000]/50 p-4 font-mono text-xs leading-relaxed text-[#7dd3b5]">$ envvy login
+$ envvy init
+$ envvy backup
 <span class="text-[#a8b3af]">Backup written: version 42</span>
-$ envii push
-<span class="text-[#D4A574]">Awaiting confirmation...</span></pre>
+$ envvy push
+$ envvy watch</pre>
               </div>
             </div>
           </div>
@@ -441,47 +454,47 @@ $ envii push
             <div class="space-y-1.5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               <button data-cli-step="0" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">1</span>
-                <span>envii login</span>
+                <span>envvy login</span>
               </button>
               <button data-cli-step="1" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">2</span>
-                <span>envii init</span>
+                <span>envvy init</span>
               </button>
               <button data-cli-step="2" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">3</span>
-                <span>envii backup</span>
+                <span>envvy backup</span>
               </button>
               <button data-cli-step="3" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">4</span>
-                <span>envii restore [repoSlug]</span>
+                <span>envvy restore [repoSlug]</span>
               </button>
               <button data-cli-step="4" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">5</span>
-                <span>envii list</span>
+                <span>envvy list</span>
               </button>
               <button data-cli-step="5" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">6</span>
-                <span>envii commit -m "message"</span>
+                <span>envvy commit -m "message"</span>
               </button>
               <button data-cli-step="6" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">7</span>
-                <span>envii push</span>
+                <span>envvy push</span>
               </button>
               <button data-cli-step="7" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">8</span>
-                <span>envii pull</span>
+                <span>envvy pull</span>
               </button>
               <button data-cli-step="8" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">9</span>
-                <span>envii fork &lt;repoId&gt;</span>
+                <span>envvy fork &lt;repoId&gt;</span>
               </button>
               <button data-cli-step="9" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">10</span>
-                <span>envii star &lt;repoId&gt;</span>
+                <span>envvy star &lt;repoId&gt;</span>
               </button>
               <button data-cli-step="10" class="cli-step-btn flex w-full items-center gap-3 rounded-lg border border-transparent bg-[#051d16]/70 px-3 py-2 text-left text-xs text-[#8fa49d]">
                 <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1B4D3E]/40 text-[10px] text-[#D4A574] font-mono">11</span>
-                <span>envii watch</span>
+                <span>envvy watch</span>
               </button>
             </div>
           </div>
@@ -759,17 +772,17 @@ $ envii push
       const stepButtons = Array.from(document.querySelectorAll(".cli-step-btn"));
 
       const steps = [
-        { queueCmd: "envii login", runCmd: "envii login", out: ["Logged in as sre@company.dev", "Token stored in local profile."] },
-        { queueCmd: "envii init", runCmd: "envii init", out: ["Initialized envii in this repository.", "Detected environment: production"] },
-        { queueCmd: "envii backup", runCmd: "envii backup", out: ["Encrypted backup created.", "Version 41 saved successfully."] },
-        { queueCmd: "envii restore [repoSlug]", runCmd: "envii restore payments-api", out: ["Fetched latest snapshot.", "Restored .env for payments-api"] },
-        { queueCmd: "envii list", runCmd: "envii list", out: ["payments-api", "checkout-worker", "auth-service"] },
-        { queueCmd: 'envii commit -m "message"', runCmd: 'envii commit -m "Rotate JWT secret"', out: ["Change note staged for next push."] },
-        { queueCmd: "envii push", runCmd: "envii push", out: ["Backed up payments-api at version 42."] },
-        { queueCmd: "envii pull", runCmd: "envii pull", out: ["Pulled latest env into local workspace."] },
-        { queueCmd: "envii fork <repoId>", runCmd: "envii fork repo_42", out: ["Fork created in your account."] },
-        { queueCmd: "envii star <repoId>", runCmd: "envii star repo_42", out: ["Repository starred."] },
-        { queueCmd: "envii watch", runCmd: "envii watch", out: ["Watching .env files for changes...", "Auto-backup prompt enabled."] }
+        { queueCmd: "envvy login", runCmd: "envvy login", out: ["Logged in as sre@company.dev", "Token stored in local profile."] },
+        { queueCmd: "envvy init", runCmd: "envvy init", out: ["Initialized envvy in this repository.", "Detected environment: production"] },
+        { queueCmd: "envvy backup", runCmd: "envvy backup", out: ["Encrypted backup created.", "Version 41 saved successfully."] },
+        { queueCmd: "envvy restore [repoSlug]", runCmd: "envvy restore payments-api", out: ["Fetched latest snapshot.", "Restored .env for payments-api"] },
+        { queueCmd: "envvy list", runCmd: "envvy list", out: ["payments-api", "checkout-worker", "auth-service"] },
+        { queueCmd: 'envvy commit -m "message"', runCmd: 'envvy commit -m "Rotate JWT secret"', out: ["Change note staged for next push."] },
+        { queueCmd: "envvy push", runCmd: "envvy push", out: ["Backed up payments-api at version 42."] },
+        { queueCmd: "envvy pull", runCmd: "envvy pull", out: ["Pulled latest env into local workspace."] },
+        { queueCmd: "envvy fork <repoId>", runCmd: "envvy fork repo_42", out: ["Fork created in your account."] },
+        { queueCmd: "envvy star <repoId>", runCmd: "envvy star repo_42", out: ["Repository starred."] },
+        { queueCmd: "envvy watch", runCmd: "envvy watch", out: ["Watching .env files for changes...", "Auto-backup prompt enabled."] }
       ];
 
       let stepIndex = 0;
@@ -996,6 +1009,21 @@ $ envii push
     }, { threshold: 0.08 });
     document.querySelectorAll(".animate-on-scroll").forEach(el => observer.observe(el));
     if (window.lucide) lucide.createIcons();
+  </script>
+  <script>
+    function copyInstallCommand(btn) {
+      const command = "npm install -g envvy-cli";
+      navigator.clipboard.writeText(command).then(() => {
+        const copyIcon = btn.querySelector('.copy-icon');
+        const checkIcon = btn.querySelector('.check-icon');
+        copyIcon.classList.add('hidden');
+        checkIcon.classList.remove('hidden');
+        setTimeout(() => {
+          copyIcon.classList.remove('hidden');
+          checkIcon.classList.add('hidden');
+        }, 2000);
+      });
+    }
   </script>
 </body>
 </html>

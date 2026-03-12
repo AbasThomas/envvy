@@ -276,7 +276,7 @@ export default function DashboardPage() {
                 </div>
                 <p className="text-[#f5f5f0] font-medium">No repositories yet</p>
                 <p className="mt-1 text-sm text-[#a8b3af] max-w-[280px]">
-                  Create one above, then run <code className="bg-[#1B4D3E]/30 px-1 rounded">envvy backup</code> from your project terminal.
+                  Create one above, then run <code className="bg-[#1B4D3E]/30 px-1 rounded">npm i -g envvy-cli</code> followed by <code className="bg-[#1B4D3E]/30 px-1 rounded">envvy backup</code> from your project terminal.
                 </p>
               </CardContent>
             </Card>
